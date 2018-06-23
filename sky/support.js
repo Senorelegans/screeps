@@ -1,4 +1,9 @@
 module.exports = {
+    // Print JSON objects
+    print: function(obj) {
+        console.log(JSON.stringify(obj));
+    },
+    
     // Calculate cost of a set of parts
     getCost: function(parts) {
         var bodyCost = {
@@ -23,6 +28,14 @@ module.exports = {
         for(let name in Memory.creeps) {
             if(!Game.creeps[name]) {
                 delete Memory.creeps[name];
+            }
+        }
+    },
+    
+    removeroads: function(room) {
+        for (let site of room.find(FIND_CONSTRUCTION_SITES)) {
+            if (site.structureType == STRUCTURE_ROAD) {
+                site.remove();
             }
         }
     }

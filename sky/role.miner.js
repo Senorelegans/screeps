@@ -9,8 +9,7 @@ module.exports = {
         
         switch (creep.memory.mode) {
             case "filling":
-                let sources = creep.room.find(FIND_SOURCES);
-                let source = sources[0];
+                let source = Game.getObjectById(creep.memory.sourceid);
                 creep.memory.action = "mining";
                 if (creep.harvest(source) == ERR_NOT_IN_RANGE) {
                     creep.moveTo(source, {visualizePathStyle: {stroke: '#ffffff'}});
