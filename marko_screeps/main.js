@@ -20,6 +20,9 @@ module.exports.loop = function () {
         {rolename:'builder',  amount:0, actions:[WORK,WORK,CARRY,MOVE] },
         {rolename:'upgrader', amount:50, actions:[WORK,CARRY,MOVE,MOVE] }];
     for (var Role in roles_list) {
+
+        roleImport = require('role.'+roles_list[Role].rolename).
+
         var current_role =  _.filter(Game.creeps, (creep) => creep.memory.role == roles_list[Role].rolename);
         //console.log(roles_list[Role].rolename + ": " + current_role.length);
         if(current_role.length < roles_list[Role].amount) {
@@ -36,7 +39,7 @@ module.exports.loop = function () {
             //if creep == "upgrader7307625"
 
             if(creep.memory.role == roles_list[Role].rolename) {
-                require('role.'+roles_list[Role].rolename).run(creep);
+                roleImport.run(creep);
             }
         }
     }
