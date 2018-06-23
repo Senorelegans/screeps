@@ -8,9 +8,11 @@ slcy
 
 
 change the roles of screeps
-Game.creeps['Harvester1'].memory.role = 'harvester';
+Game.creeps['builder7309476'].memory.role = 'harvester';
 Game.creeps['Harvester2'].memory.role = 'builder';
-Game.creeps['Harvester2'].memory.role = 'upgrader';
+Game.creeps['builder7309476'].memory.role = 'upgrader';
+
+builder7309476
 
 Game.creeps['poop'].memory.role = 'upgrader';
 

@@ -22,8 +22,10 @@ module.exports.loop = function () {
         'distributor': {amount:0, parts:[CARRY,CARRY,MOVE,MOVE,MOVE,MOVE], cost:300, actions:roleDistributor},
     };
 //    console.log("miner", support.getCost(roles.miner.parts));
+
     for (let role of Object.keys(roles)) {
         var census =  _.filter(Game.creeps, (creep) => creep.memory.role == role);
+
         if(census.length < roles[role].amount) {
             var newName = role + Game.time;
             Game.spawns[spawner].spawnCreep(roles[role].parts, newName, {memory: {role: role}});

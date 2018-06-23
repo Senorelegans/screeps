@@ -2,6 +2,7 @@ var Traveler = require('Traveler');
 var roleHarvester = require('role.harvester');
 var roleUpgrader = require('role.upgrader');
 var roleBuilder = require('role.builder');
+let roleRoadBuilder = require('role.roadbuilder');
 let support = require('support');
 
 
@@ -23,56 +24,37 @@ module.exports.loop = function () {
     }
 
 
-
-
-
-
-
-    // Spawning roles
-    var roles_list = [
-        {rolename:'harvester',amount:10, actions:[WORK,WORK,CARRY,MOVE] },
-        {rolename:'builder',  amount:5, actions:[WORK,WORK,CARRY,MOVE] },
-        {rolename:'upgrader', amount:10, actions:[WORK,CARRY,MOVE,MOVE] }];
-    for (var Role in roles_list) {
-
-        rolename = roles_list[Role].rolename;
-        roleImport = require('role.'+rolename);
-
-        var current_role =  _.filter(Game.creeps, (creep) => creep.memory.role == roles_list[Role].rolename);
-        //console.log(roles_list[Role].rolename + ": " + current_role.length);
-        if(current_role.length < roles_list[Role].amount) {
-            var newName = roles_list[Role].rolename + Game.time;
-            //console.log('Spawning new '+ roles_list[Role].rolename  + " " + newName);
-            Game.spawns['Spawn1'].spawnCreep(roles_list[Role].actions, newName,// put in newname for undefined newname,
-                {memory: {role: rolename, working:false}});
-        }
-
-        // Running the roles of each creep
-        for(var name in Game.creeps) {
-            var creep = Game.creeps[name];
-            //if creep == "upgrader7307625"
-            if(creep.memory.role == rolename) {
-                roleImport.run(creep);
-            }
+    // Creep census
+    let roles = {
+        'roadbuilder': {amount:1, parts:[WORK,WORK,CARRY,MOVE], cost:300, actions:roleRoadBuilder},
+        'builder': {amount:2, parts:[WORK,WORK,CARRY,MOVE], cost:300, actions:roleBuilder},
+        'upgrader': {amount:3, parts:[WORK,MOVE,CARRY,MOVE], cost:300, actions:roleUpgrader},
+        'harvester': {amount:6, parts:[WORK,WORK,CARRY,MOVE], cost:300, actions:roleHarvester},
+    };
+//    console.log("miner", support.getCost(roles.miner.parts));
+    for (let role of Object.keys(roles)) {
+        var census =  _.filter(Game.creeps, (creep) => creep.memory.role == role);
+        if(census.length < roles[role].amount) {
+            var newName = role + Game.time;
+            Game.spawns[spawner].spawnCreep(roles[role].parts, newName, {memory: {role: role}});
         }
     }
 
-
-
-    //Spawning visual
-    if(Game.spawns['Spawn1'].spawning) {
-        var spawningCreep = Game.creeps[Game.spawns['Spawn1'].spawning.name];
-        Game.spawns['Spawn1'].room.visual.text(
+    // If spawning, make a notification
+    if (Game.spawns[spawner].spawning) {
+        var spawningCreep = Game.creeps[Game.spawns[spawner].spawning.name];
+        Game.spawns[spawner].room.visual.text(
             '🛠️' + spawningCreep.memory.role,
-            Game.spawns['Spawn1'].pos.x + 1,
-            Game.spawns['Spawn1'].pos.y,
+            Game.spawns[spawner].pos.x + 1,
+            Game.spawns[spawner].pos.y,
             {align: 'left', opacity: 0.8});
     }
 
-    //Game.rooms[roomName].createConstructionSite(10, 15, STRUCTURE_ROAD);
-
-    //console.log(Game.creeps["Harvester1"].room.find(FIND_SOURCES) );
-
+    // Run creep roles
+    for(let name in Game.creeps) {
+        let creep = Game.creeps[name];
+        roles[creep.memory.role].actions.run(creep);
+    }
 
 
 }
