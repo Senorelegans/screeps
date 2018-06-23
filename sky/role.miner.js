@@ -17,7 +17,7 @@ module.exports = {
                 break;
                 
             case "emptying":
-                let container = "";     // FIND CONTAINER
+                let container = Game.getObjectById(creep.memory.containerid);
                 creep.memory.action = "depositing";
                 if(creep.transfer(container, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
                     creep.moveTo(container, {visualizePathStyle: {stroke: '#ffffff'}});

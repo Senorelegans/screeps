@@ -7,6 +7,8 @@ module.exports = {
             creep.memory.mode = "filling";
         }
         
+        
+        
         switch (creep.memory.mode) {
             case "filling":
                 let source = Game.getObjectById(creep.memory.sourceid);
