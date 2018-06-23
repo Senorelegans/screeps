@@ -36,7 +36,7 @@ module.exports.loop = function () {
             //if creep == "upgrader7307625"
 
             if(creep.memory.role == roles_list[Role].rolename) {
-                current_role.run(creep);
+                require('role.'+roles_list[Role].rolename).run(creep);
             }
         }
     }
