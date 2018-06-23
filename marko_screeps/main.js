@@ -5,6 +5,10 @@ var roleBuilder = require('role.builder');
 
 module.exports.loop = function () {
 
+    const spawner = "Spawn1";
+
+
+
     // Remove dead creeps from memory
     for(var name in Memory.creeps) {
         if(!Game.creeps[name]) {
@@ -16,9 +20,9 @@ module.exports.loop = function () {
 
     // Spawning roles
     var roles_list = [
-        {rolename:'harvester',amount:10, actions:[WORK,WORK,CARRY,MOVE] },
-        {rolename:'builder',  amount:0, actions:[WORK,WORK,CARRY,MOVE] },
-        {rolename:'upgrader', amount:30, actions:[WORK,CARRY,MOVE,MOVE] }];
+        {rolename:'harvester',amount:5, actions:[WORK,WORK,CARRY,MOVE] },
+        {rolename:'builder',  amount:3, actions:[WORK,WORK,CARRY,MOVE] },
+        {rolename:'upgrader', amount:0, actions:[WORK,CARRY,MOVE,MOVE] }];
     for (var Role in roles_list) {
 
         rolename = roles_list[Role].rolename;
@@ -55,6 +59,7 @@ module.exports.loop = function () {
             {align: 'left', opacity: 0.8});
     }
 
+    //Game.rooms[roomName].createConstructionSite(10, 15, STRUCTURE_ROAD);
 
     //console.log(Game.creeps["Harvester1"].room.find(FIND_SOURCES) );
 
