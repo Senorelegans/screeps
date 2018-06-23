@@ -9,7 +9,8 @@ module.exports = {
         
         switch (creep.memory.mode) {
             case "filling":
-                let source = Game.getObjectById(creep.memory.sourceid);
+                let sources = creep.room.find(FIND_SOURCES);
+                let source = sources[0];
                 creep.memory.action = "mining";
                 if (creep.harvest(source) == ERR_NOT_IN_RANGE) {
                     creep.moveTo(source, {visualizePathStyle: {stroke: '#ffffff'}});
@@ -32,7 +33,7 @@ module.exports = {
                             const tile = creep.room.getPositionAt(pos.x, pos.y);
                             if (tile.lookFor(LOOK_STRUCTURES).length == 0 && tile.lookFor(LOOK_CONSTRUCTION_SITES).length == 0) {
 //                                console.log('placing construction site at', pos.x, ',', pos.y);
-//                                creep.room.createConstructionSite(pos.x, pos.y, STRUCTURE_ROAD);
+                                creep.room.createConstructionSite(pos.x, pos.y, STRUCTURE_ROAD);
                             }
                         }
                     }
