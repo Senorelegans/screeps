@@ -32,8 +32,11 @@ module.exports.loop = function () {
         // Running the roles of each creep
         for(var name in Game.creeps) {
             var creep = Game.creeps[name];
+
+            //if creep == "upgrader7307625"
+
             if(creep.memory.role == roles_list[Role].rolename) {
-                roleHarvester.run(creep);
+                current_role.run(creep);
             }
         }
     }
