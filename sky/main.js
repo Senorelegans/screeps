@@ -1,8 +1,10 @@
 // Game.spawns['Spawn1'].spawnCreep( [WORK,WORK,CARRY,MOVE],'a',{ memory: { role: 'harvester' } } );
-
 // Game.creeps['a'].move(TOP);
+// https://github.com/bonzaiferroni/bonzAI/wiki/Traveler-API
 
 let roleHarvester = require('role.harvester');
+let roleMiner = "";
+let roleDistributor = require('role.distributor');
 
 module.exports.loop = function () {
     // Names for units
@@ -15,10 +17,31 @@ module.exports.loop = function () {
         }
     }
     
+    function getCost(parts) {
+        var bodyCost = {
+            "move": 50,
+            "work": 100,
+            "carry": 50,
+            "attack": 80,
+            "ranged_attack": 150,
+            "heal": 250,
+            "claim": 600,
+            "tough": 10,
+        };
+        let cost = 0;
+        for (let part of parts) {
+            cost += bodyCost[part];
+        }
+        return cost;
+    }
+    
     // Creep census
     let roles = {
-        'harvester': {amount:4, parts:[WORK,WORK,CARRY,MOVE], actions:roleHarvester},
+        'harvester': {amount:3, parts:[WORK,WORK,CARRY,MOVE], cost:300, actions:roleHarvester},
+        'miner': {amount:0, parts:[WORK,WORK,WORK,WORK,CARRY,MOVE], cost:500, actions:roleMiner},
+        'distributor': {amount:0, parts:[CARRY,CARRY,MOVE,MOVE,MOVE,MOVE], cost:300, actions:roleDistributor},
     };
+//    console.log("miner", getCost(roles.miner.parts));
     for (let role of Object.keys(roles)) {
         var census =  _.filter(Game.creeps, (creep) => creep.memory.role == role);
         if(census.length < roles[role].amount) {

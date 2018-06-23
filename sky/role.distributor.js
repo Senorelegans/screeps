@@ -9,11 +9,10 @@ module.exports = {
         
         switch (creep.memory.mode) {
             case "filling":
-                let sources = creep.room.find(FIND_SOURCES);
-                let source = sources[0];
-                creep.memory.action = "mining";
-                if (creep.harvest(source) == ERR_NOT_IN_RANGE) {
-                    creep.moveTo(source, {visualizePathStyle: {stroke: '#ffffff'}});
+                let container = "";     // FIND CONTAINER
+                creep.memory.action = "withdrawing";
+                if (creep.withdraw(container, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+                    creep.moveTo(container, {visualizePathStyle: {stroke: '#ffffff'}});
                 }
                 break;
                 
