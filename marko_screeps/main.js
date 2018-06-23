@@ -2,10 +2,17 @@ var Traveler = require('Traveler');
 var roleHarvester = require('role.harvester');
 var roleUpgrader = require('role.upgrader');
 var roleBuilder = require('role.builder');
+let support = require('support');
+
+
 
 module.exports.loop = function () {
 
     const spawner = "Spawn1";
+
+    support.erasedead();
+
+
 
     // Make list of important sites to network
     let importantsites = [
@@ -17,20 +24,15 @@ module.exports.loop = function () {
 
 
 
-    // Remove dead creeps from memory
-    for(var name in Memory.creeps) {
-        if(!Game.creeps[name]) {
-            delete Memory.creeps[name];
-            console.log('Clearing non-existing creep memory:', name);
-        }
-    }
+
+
 
 
     // Spawning roles
     var roles_list = [
-        {rolename:'harvester',amount:5, actions:[WORK,WORK,CARRY,MOVE] },
-        {rolename:'builder',  amount:3, actions:[WORK,WORK,CARRY,MOVE] },
-        {rolename:'upgrader', amount:0, actions:[WORK,CARRY,MOVE,MOVE] }];
+        {rolename:'harvester',amount:10, actions:[WORK,WORK,CARRY,MOVE] },
+        {rolename:'builder',  amount:5, actions:[WORK,WORK,CARRY,MOVE] },
+        {rolename:'upgrader', amount:10, actions:[WORK,CARRY,MOVE,MOVE] }];
     for (var Role in roles_list) {
 
         rolename = roles_list[Role].rolename;

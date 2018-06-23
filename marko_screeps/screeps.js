@@ -27,3 +27,7 @@ Game.creeps['Harvester1'].move(RIGHT);
 
 console log
 console.log(creep.memory.role);
+
+
+get spawn location
+console.log(Game.spawns['Spawn1']);
