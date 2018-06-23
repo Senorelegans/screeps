@@ -6,6 +6,7 @@ let support = require('support');
 let roleHarvester = require('role.harvester');
 let roleMiner = "";
 let roleDistributor = require('role.distributor');
+let roleRoadBuilder = require('role.roadbuilder');
 
 module.exports.loop = function () {
     // Names for units
@@ -13,11 +14,10 @@ module.exports.loop = function () {
 
     support.erasedead();
     
-    
-    
     // Creep census
     let roles = {
         'harvester': {amount:3, parts:[WORK,WORK,CARRY,MOVE], cost:300, actions:roleHarvester},
+        'roadbuilder': {amount:1, parts:[WORK,WORK,CARRY,MOVE], cost:300, actions:roleRoadBuilder},
         'miner': {amount:0, parts:[WORK,WORK,WORK,WORK,CARRY,MOVE], cost:500, actions:roleMiner},
         'distributor': {amount:0, parts:[CARRY,CARRY,MOVE,MOVE,MOVE,MOVE], cost:300, actions:roleDistributor},
     };
@@ -39,16 +39,6 @@ module.exports.loop = function () {
             Game.spawns[spawner].pos.y, 
             {align: 'left', opacity: 0.8});
     }
-    
-    // Make list of important sites to network
-    let importantsites = [
-        Game.spawns[spawner],
-    ];
-    for (let room of Object.keys(Game.rooms)) {
-        importantsites.push(Game.rooms[room].controller);
-    }
-//    console.log(JSON.stringify(importantsites));
-    //Game.rooms.sim.createConstructionSite(10, 15, STRUCTURE_ROAD);
     
     // Run creep roles
     for(let name in Game.creeps) {
