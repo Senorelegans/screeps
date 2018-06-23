@@ -2,10 +2,7 @@
 
 // Game.creeps['a'].move(TOP);
 
-var roleBuilder = require('role.builder');
-
 let roleHarvester = require('role.harvester');
-let slcypath = require('slcypath');
 
 module.exports.loop = function () {
     // Names for units
