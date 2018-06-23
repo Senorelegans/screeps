@@ -7,13 +7,7 @@ let roleHarvester = require('role.harvester');
 module.exports.loop = function () {
     // Names for units
     const spawner = "Spawn1";
-    const roles = {
-        harvester: "harvester",
-    };
-    
-    // Control Constants
-    const NUMHARVESTERS = 4;
-    
+
     // Delete memory of nonexistant creeps
     for(let name in Memory.creeps) {
         if(!Game.creeps[name]) {
@@ -21,13 +15,18 @@ module.exports.loop = function () {
         }
     }
     
-    // Take harvester census
-    let harvesters = _.filter(Game.creeps, (creep) => creep.memory.role == roles.harvester);
-    // If below quota, spawn a new one
-    if (harvesters.length < NUMHARVESTERS) {
-        var newName = roles.harvester + Game.time;
-        Game.spawns[spawner].spawnCreep([WORK,WORK,CARRY,MOVE], newName, {memory: {role: roles.harvester}});
+    // Creep census
+    let roles = {
+        'harvester': {amount:4, parts:[WORK,WORK,CARRY,MOVE], actions:roleHarvester},
+    };
+    for (let role of Object.keys(roles)) {
+        var census =  _.filter(Game.creeps, (creep) => creep.memory.role == role);
+        if(census.length < roles[role].amount) {
+            var newName = role + Game.time;
+            Game.spawns[spawner].spawnCreep(roles[role].parts, newName, {memory: {role: role}});
+        }
     }
+
     // If spawning, make a notification
     if (Game.spawns[spawner].spawning) { 
         var spawningCreep = Game.creeps[Game.spawns[spawner].spawning.name];
@@ -48,11 +47,9 @@ module.exports.loop = function () {
 //    console.log(JSON.stringify(importantsites));
     //Game.rooms.sim.createConstructionSite(10, 15, STRUCTURE_ROAD);
     
-    // Pass orders to units
+    // Run creep roles
     for(let name in Game.creeps) {
         let creep = Game.creeps[name];
-        if(creep.memory.role == roles.harvester) {
-            roleHarvester.run(creep);
-        }
+        roles[creep.memory.role].actions.run(creep);
     }
 }

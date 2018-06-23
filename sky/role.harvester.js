@@ -1,7 +1,3 @@
-let slcypath = require('slcypath');
-//                        const targetx = (Math.random() * 2 + 40).toFixed(0);
-//                        slcypath.pathto(creep, {x:targetx, y:18});
-
 module.exports = {
     run: function(creep) {
 
