@@ -21,7 +21,8 @@ module.exports.loop = function () {
         {rolename:'upgrader', amount:50, actions:[WORK,CARRY,MOVE,MOVE] }];
     for (var Role in roles_list) {
 
-        roleImport = require('role.'+roles_list[Role].rolename).
+        screepRole
+        roleImport = require('role.'+roles_list[Role].rolename)
 
         var current_role =  _.filter(Game.creeps, (creep) => creep.memory.role == roles_list[Role].rolename);
         //console.log(roles_list[Role].rolename + ": " + current_role.length);
