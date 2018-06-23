@@ -16,6 +16,11 @@ module.exports.loop = function () {
 
     support.erasedead();
     
+    // Get lists
+    const sources = Game.spawns[spawner].room.find(FIND_SOURCES);
+    const extensions = Game.spawns[spawner].room.find(FIND_MY_STRUCTURES, {filter: { structureType: STRUCTURE_EXTENSION }});
+    const containers = Game.spawns[spawner].room.find(FIND_MY_STRUCTURES, {filter: { structureType: STRUCTURE_CONTAINER }});
+    
     // Creep census
     let roles = {
         'roadbuilder': {amount:1, parts:[WORK,WORK,CARRY,MOVE], cost:300, actions:roleRoadBuilder},
@@ -31,9 +36,10 @@ module.exports.loop = function () {
             var newName = role + Game.time;
             let memory = {role: role};
             switch (role) {
-                case 'harvester':
                 case 'miner':
-                    memory.sourceid = creep.room.find(FIND_SOURCES)[0].id;
+                    memory.destid = containers[0].id;
+                case 'harvester':
+                    memory.sourceid = sources[0].id;
                     break;
             }
             Game.spawns[spawner].spawnCreep(roles[role].parts, newName, {memory: memory});
