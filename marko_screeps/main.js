@@ -15,10 +15,19 @@ module.exports.loop = function () {
     const spawner = "Spawn1";
     spawnroom = Game.spawns[spawner].room;
 
-    var extensions = Game.spawns[spawner].room(FIND_MY_STRUCTURES, {
+    knownrooms = Game.rooms;
+    console.log(knownrooms)
+    console.log(Game.spawns[spawner].room);
+    console.log(Game.spawns['Spawn1']);
+
+    
+
+    var extensions = Game.spawns[spawner].room.find(FIND_MY_STRUCTURES, {
         filter: { structureType: STRUCTURE_EXTENSION }
     });
     console.log(extensions.length);
+
+
 
 
 
