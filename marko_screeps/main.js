@@ -18,11 +18,11 @@ module.exports.loop = function () {
     var roles_list = [
         {rolename:'harvester',amount:10, actions:[WORK,WORK,CARRY,MOVE] },
         {rolename:'builder',  amount:0, actions:[WORK,WORK,CARRY,MOVE] },
-        {rolename:'upgrader', amount:50, actions:[WORK,CARRY,MOVE,MOVE] }];
+        {rolename:'upgrader', amount:30, actions:[WORK,CARRY,MOVE,MOVE] }];
     for (var Role in roles_list) {
 
-        //screepRole
-        roleImport = require('role.'+roles_list[Role].rolename)
+        rolename = roles_list[Role].rolename;
+        roleImport = require('role.'+rolename);
 
         var current_role =  _.filter(Game.creeps, (creep) => creep.memory.role == roles_list[Role].rolename);
         //console.log(roles_list[Role].rolename + ": " + current_role.length);
@@ -30,16 +30,14 @@ module.exports.loop = function () {
             var newName = roles_list[Role].rolename + Game.time;
             //console.log('Spawning new '+ roles_list[Role].rolename  + " " + newName);
             Game.spawns['Spawn1'].spawnCreep(roles_list[Role].actions, newName,// put in newname for undefined newname,
-                {memory: {role: roles_list[Role].rolename, working:false}});
+                {memory: {role: rolename, working:false}});
         }
 
         // Running the roles of each creep
         for(var name in Game.creeps) {
             var creep = Game.creeps[name];
-
             //if creep == "upgrader7307625"
-
-            if(creep.memory.role == roles_list[Role].rolename) {
+            if(creep.memory.role == rolename) {
                 roleImport.run(creep);
             }
         }
