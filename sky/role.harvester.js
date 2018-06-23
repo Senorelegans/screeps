@@ -19,6 +19,7 @@ module.exports = {
                 break;
                 
             case "emptying":
+                creep.memory.action = "distributing";
                 let targets = [];
                 // Check spawn
                 const spawn = Game.spawns['Spawn1']
@@ -42,10 +43,11 @@ module.exports = {
                 targets.push(creep.room.controller);
                 // Do first target
                 let target = targets[0];
-                if(creep.transfer(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+//                console.log(creep.build(target));
+                if(creep.build(target) == ERR_NOT_IN_RANGE) {
                     creep.moveTo(target, {visualizePathStyle: {stroke: '#ffffff'}});
                 }
-                if(creep.build(target) == ERR_NOT_IN_RANGE) {
+                if(creep.transfer(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
                     creep.moveTo(target, {visualizePathStyle: {stroke: '#ffffff'}});
                 }
                 if(creep.upgradeController(target) == ERR_NOT_IN_RANGE) {

@@ -1,6 +1,11 @@
 module.exports = {
-    run: function(creep) {
+    run: function(creep, tombstones) {
         // toggle empty/full status
+        
+        if (tombstones.length > 0) {
+//            console.log("Tombstones:");
+//            console.log(JSON.stringify(tombstones));
+        }
         
         if (creep.carry.energy == creep.carryCapacity) {
 //            console.log("I should be emptying");
@@ -22,19 +27,39 @@ module.exports = {
                 break;
                 
             case "emptying":
-//                console.log("I am emptying");
-                if (Game.spawns['Spawn1'].energy < 300) {
-                    const spawn = Game.spawns['Spawn1'];
-                    creep.memory.action = "supplying";
-                    if(creep.transfer(spawn, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-                        creep.moveTo(spawn, {visualizePathStyle: {stroke: '#ffffff'}});
+                creep.memory.action = "distributing";
+                let targets = [];
+                // Check spawn
+                const spawn = Game.spawns['Spawn1']
+                if (spawn.energy < spawn.energyCapacity) {
+                    targets.push(spawn);
+                }
+                // Check extensions
+                for (let structure of creep.room.find(FIND_MY_STRUCTURES)) {
+                    if (structure.structureType == STRUCTURE_EXTENSION) {
+                        if (structure.energy < structure.energyCapacity) {
+                            targets.push(structure);
+                        }
                     }
-                } else {
-                    let controller = creep.room.controller;
-                    creep.memory.action = "upgrading";
-                    if(creep.upgradeController(creep.room.controller) == ERR_NOT_IN_RANGE) {
-                        creep.moveTo(controller, {visualizePathStyle: {stroke: '#ffffff'}});
-                    }
+                }
+                // Check building sites
+                let sites = creep.room.find(FIND_CONSTRUCTION_SITES);
+                for (let site of sites) {
+                    targets.push(site);
+                }
+                // Check room controller
+                targets.push(creep.room.controller);
+                // Do first target
+                let target = targets[0];
+//                console.log(creep.build(target));
+                if(creep.build(target) == ERR_NOT_IN_RANGE) {
+                    creep.moveTo(target, {visualizePathStyle: {stroke: '#ffffff'}});
+                }
+                if(creep.transfer(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+                    creep.moveTo(target, {visualizePathStyle: {stroke: '#ffffff'}});
+                }
+                if(creep.upgradeController(target) == ERR_NOT_IN_RANGE) {
+                    creep.moveTo(target, {visualizePathStyle: {stroke: '#ffffff'}});
                 }
                 break;
         }
