@@ -16,16 +16,21 @@ module.exports.loop = function () {
     spawnroom = Game.spawns[spawner].room;
 
     knownrooms = Game.rooms;
-    console.log(knownrooms)
+    // console.log(knownrooms)
     console.log(Game.spawns[spawner].room);
-    console.log(Game.spawns['Spawn1']);
+    // console.log(Game.spawns['Spawn1']);
+    // Game.spawns['Spawn1'];
 
-    
+    RCL_progress = Game.spawns[spawner].room.controller.progress;
+    RCL_progress_total = Game.spawns[spawner].room.controller.progressTotal;
+    RCL = (Game.spawns[spawner].room.controller.level);
+    console.log("Room lvl: " + RCL);
 
     var extensions = Game.spawns[spawner].room.find(FIND_MY_STRUCTURES, {
         filter: { structureType: STRUCTURE_EXTENSION }
     });
-    console.log(extensions.length);
+    //console.log(extensions.length);
+    //console.log(extensions);
 
 
 
@@ -43,9 +48,9 @@ module.exports.loop = function () {
 
     // Creep census
     let roles = {
-        'roadbuilder': {amount:1, parts:[WORK,WORK,CARRY,MOVE], cost:300, actions:roleRoadBuilder},
+        'roadbuilder': {amount:0, parts:[WORK,WORK,CARRY,MOVE], cost:300, actions:roleRoadBuilder},
         'builder': {amount:3, parts:[WORK,WORK,CARRY,MOVE], cost:300, actions:roleBuilder},
-        'upgrader': {amount:10, parts:[WORK,MOVE,CARRY,MOVE], cost:300, actions:roleUpgrader},
+        'upgrader': {amount:6, parts:[WORK,MOVE,CARRY,MOVE], cost:300, actions:roleUpgrader},
         'harvester': {amount:6, parts:[WORK,WORK,CARRY,MOVE], cost:300, actions:roleHarvester},
     };
 //    console.log("miner", support.getCost(roles.miner.parts));
