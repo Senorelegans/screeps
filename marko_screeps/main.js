@@ -7,6 +7,14 @@ module.exports.loop = function () {
 
     const spawner = "Spawn1";
 
+    // Make list of important sites to network
+    let importantsites = [
+        Game.spawns[spawner],
+    ];
+    for (let room of Object.keys(Game.rooms)) {
+        importantsites.push(Game.rooms[room].controller);
+    }
+
 
 
     // Remove dead creeps from memory
