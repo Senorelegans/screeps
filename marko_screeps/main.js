@@ -8,10 +8,18 @@ let support = require('support');
 
 
 module.exports.loop = function () {
+    support.erasedead();
+
+
 
     const spawner = "Spawn1";
+    spawnroom = Game.spawns[spawner].room;
 
-    support.erasedead();
+    var extensions = Game.spawns[spawner].room(FIND_MY_STRUCTURES, {
+        filter: { structureType: STRUCTURE_EXTENSION }
+    });
+    console.log(extensions.length);
+
 
 
 
@@ -27,8 +35,8 @@ module.exports.loop = function () {
     // Creep census
     let roles = {
         'roadbuilder': {amount:1, parts:[WORK,WORK,CARRY,MOVE], cost:300, actions:roleRoadBuilder},
-        'builder': {amount:2, parts:[WORK,WORK,CARRY,MOVE], cost:300, actions:roleBuilder},
-        'upgrader': {amount:3, parts:[WORK,MOVE,CARRY,MOVE], cost:300, actions:roleUpgrader},
+        'builder': {amount:3, parts:[WORK,WORK,CARRY,MOVE], cost:300, actions:roleBuilder},
+        'upgrader': {amount:10, parts:[WORK,MOVE,CARRY,MOVE], cost:300, actions:roleUpgrader},
         'harvester': {amount:6, parts:[WORK,WORK,CARRY,MOVE], cost:300, actions:roleHarvester},
     };
 //    console.log("miner", support.getCost(roles.miner.parts));
