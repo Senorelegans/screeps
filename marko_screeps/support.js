@@ -13,33 +13,51 @@ module.exports = {
         return [TOP, LEFT, BOTTOM, RIGHT];
     },
 
-    getTilesInArea: function(target, radius, pattern, asArray) {
+    getTilesInArea: function(target, radius, pattern, asArray, OFFSET_X, OFFSET_Y) {
+
         var pos = target.pos;
-        let TOP = pos.y - radius;
-        let LEFT = pos.x - radius;
-        let BOTTOM = pos.y + radius;
-        let RIGHT = pos.x + radius;
+        x = pos.x + OFFSET_X;
+        y = pos.y + OFFSET_Y;
+
+        let TOP = y - radius;
+        let LEFT = x - radius;
+        let BOTTOM = y + radius;
+        let RIGHT = x + radius;
         let W = RIGHT - LEFT;
         let H =  BOTTOM - TOP;
         let AREA = target.room.lookAtArea(TOP, LEFT, BOTTOM, RIGHT, asArray);
 
-        if (pattern="none") {
-            return AREA;
-        }
-        if (pattern ="checkerboard") {
-            for (y = TOP; y <= BOTTOM; y++) {
-                // console.log("y is :"+ y);
-                for (x = LEFT; x <= RIGHT; x++) {
-                    let tile = AREA[y][x];
-                    console.log("x is :" + x);
-                    console.log(AREA[y][x]);
-                    console.log(JSON.stringify(AREA[y][x]));
-                }
-            }
+        target.room.visual.text("M", x, y, {align: 'center', opacity: 0.5} );
+        switch (pattern) {
+            case "none":
+                console.log(pattern);
+                return AREA;
 
+            case "checkerboard":
+                ODD = true;
+                A = [];
+                // console.log("checkerboard activated");
+                for (y = TOP; y <= BOTTOM; y++) {
+                    // console.log("y is :"+ y);
+                    for (x = LEFT; x <= RIGHT; x++) {
+                        let tile = AREA[y][x];
+                        num = (x + y) % 2;
+                        if (num == 0) {
+                            target.room.visual.text("C", x, y, {align: 'center', opacity: 0.2} );
+                            tile.x = x;
+                            tile.y = y;
+                            A.push(tile);
+                        }
+
+                        // console.log(tile)
+                    }
+                }
+                return A;
         }
     },
 
+
+    
     SpawnerInfo: function(MYSPAWNER) {
         // If spawning, make a notification
         if (MYSPAWNER.spawning) {
@@ -51,8 +69,6 @@ module.exports = {
                 {align: 'center', opacity: 0.2});
         }
     },
-
-
 
     dir: {
         1 : {name:"TOP", dx:0, dy:-1},

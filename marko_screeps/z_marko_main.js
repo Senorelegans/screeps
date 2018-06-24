@@ -108,6 +108,4 @@ module.exports.loop = function () {
         let creep = Game.creeps[name];
         roles[creep.memory.role].actions.run(creep);
     }
-
-
 }
