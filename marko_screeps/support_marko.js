@@ -12,8 +12,10 @@ let self = module.exports = {
         let RIGHT = pos.x + radius;
         return [TOP, LEFT, BOTTOM, RIGHT];
     },
-    
-    getTilesInArea: function(target, radius, asArray) {
+
+
+    getTilesInArea: function(target, radius, pattern, asArray) {
+
         var pos = target.pos;
         let TOP = pos.y - radius;
         let LEFT = pos.x - radius;
@@ -22,13 +24,12 @@ let self = module.exports = {
         let W = RIGHT - LEFT;
         let H =  BOTTOM - TOP;
         let AREA = target.room.lookAtArea(TOP, LEFT, BOTTOM, RIGHT, asArray);
-        return AREA;
-    },
 
-    Pattern: function(AREA, TOP, LEFT, BOTTOM, RIGHT, pattern) {
         if (pattern="none") {
             return AREA;
         }
+
+
         if (pattern ="checkerboard") {
             for (y = TOP; y <= BOTTOM; y++) {
                 // console.log("y is :"+ y);
@@ -41,19 +42,6 @@ let self = module.exports = {
             }
 
         }
-    },
-
-    getTilesInAreaWithPattern: function(target, radius, pattern, asArray) {
-        var pos = target.pos;
-        let TOP = pos.y - radius;
-        let LEFT = pos.x - radius;
-        let BOTTOM = pos.y + radius;
-        let RIGHT = pos.x + radius;
-        let W = RIGHT - LEFT;
-        let H =  BOTTOM - TOP;
-        let AREA = target.room.lookAtArea(TOP, LEFT, BOTTOM, RIGHT, asArray);
-        AREA = self.Pattern(AREA, TOP, LEFT, BOTTOM, RIGHT, pattern);
-        return AREA;
     },
 
 

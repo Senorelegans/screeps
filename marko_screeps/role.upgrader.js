@@ -35,6 +35,7 @@ module.exports = {
                 let target = creep.room.controller;
                 if(creep.upgradeController(target) == ERR_NOT_IN_RANGE) {
                     creep.moveTo(target, {visualizePathStyle: {stroke: '#ffffff'}});
+                    creep.upgradeController(creep.room.controller);
                 }
                 break;
         }

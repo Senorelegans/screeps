@@ -5,7 +5,7 @@
 
 let support = require('support');
 let roleHarvester = require('role.harvester');
-let roleRecycle = require('role.recycle');
+// let roleRecycle = require('role.recycle');
 
 module.exports.loop = function () {
     // Names for units
@@ -17,11 +17,16 @@ module.exports.loop = function () {
     
     // Get lists
     const sources = MYSPAWNER.room.find(FIND_SOURCES);
-    
+
+    for (source in sources) {
+
+    }
+
+
     // Creep census
     let roles = {
         'recycle': {amount:0, actions:roleRecycle},
-        'harvester': {amount:4, parts:[WORK,WORK,CARRY,MOVE], cost:300, actions:roleHarvester},
+        'harvester': {amount:4, parts:[WORK,WORK,CARRY,MOVE], cost:300, actions:roleHarvester, group:blue},
     };
 
     // Spawn

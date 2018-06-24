@@ -3,7 +3,7 @@
 // Game.creeps['a'].move(TOP);
 // https://github.com/bonzaiferroni/bonzAI/wiki/Traveler-API
 
-let support = require('support_marko');
+let support = require('support');
 let roleHarvester = require('role.harvester');
 let roleRecycle = require('role.recycle');
 let roleUpgrader = require('role.upgrader');
@@ -40,15 +40,7 @@ module.exports.loop = function () {
         }
     }
 
-    // If spawning, make a notification
-    if (MYSPAWNER.spawning) { 
-        var spawningCreep = Game.creeps[MYSPAWNER.spawning.name];
-        MYROOM.visual.text(
-            '🛠️' + spawningCreep.memory.role,
-            MYSPAWNER.pos.x + 0, 
-            MYSPAWNER.pos.y + 1, 
-            {align: 'center', opacity: 0.2});
-    }
+
     
     // Run creep roles
     for(let name in Game.creeps) {
@@ -59,22 +51,4 @@ module.exports.loop = function () {
                 roles[creep.memory.role].actions.run(creep);
         }
     }
-
-    let AREA = support.getTilesInAreaWithPattern(MYSPAWNER, 1, "none", false);
-
-
-    creep = Game.creeps["upgrader7334632"];
-
-    if(creep.upgradeController(creep.room.controller) == ERR_NOT_IN_RANGE) {
-        creep.moveTo(creep.room.controller, {visualizePathStyle: {stroke: '#ffffff'}});
-    }
-
-
-
-
-
-
-
-
-
 }

@@ -12,8 +12,8 @@ module.exports = {
         let RIGHT = pos.x + radius;
         return [TOP, LEFT, BOTTOM, RIGHT];
     },
-    
-    getTilesInArea: function(target, radius, asArray) {
+
+    getTilesInArea: function(target, radius, pattern, asArray) {
         var pos = target.pos;
         let TOP = pos.y - radius;
         let LEFT = pos.x - radius;
@@ -22,8 +22,37 @@ module.exports = {
         let W = RIGHT - LEFT;
         let H =  BOTTOM - TOP;
         let AREA = target.room.lookAtArea(TOP, LEFT, BOTTOM, RIGHT, asArray);
-        return AREA;
+
+        if (pattern="none") {
+            return AREA;
+        }
+        if (pattern ="checkerboard") {
+            for (y = TOP; y <= BOTTOM; y++) {
+                // console.log("y is :"+ y);
+                for (x = LEFT; x <= RIGHT; x++) {
+                    let tile = AREA[y][x];
+                    console.log("x is :" + x);
+                    console.log(AREA[y][x]);
+                    console.log(JSON.stringify(AREA[y][x]));
+                }
+            }
+
+        }
     },
+
+    SpawnerInfo: function(MYSPAWNER) {
+        // If spawning, make a notification
+        if (MYSPAWNER.spawning) {
+            var spawningCreep = Game.creeps[MYSPAWNER.spawning.name];
+            MYSPAWNER.room.visual.text(
+                '🛠️' + spawningCreep.memory.role,
+                MYSPAWNER.pos.x + 0,
+                MYSPAWNER.pos.y + 1,
+                {align: 'center', opacity: 0.2});
+        }
+    },
+
+
 
     dir: {
         1 : {name:"TOP", dx:0, dy:-1},
