@@ -60,13 +60,21 @@ module.exports.loop = function () {
     let towers = MYROOM.find(FIND_MY_STRUCTURES).filter(structure => structure.structureType == "tower");
     if (towers.length > 0) {
         for (let tower of towers) {
+            // Heal units
+            let closestHurtCreep = tower.pos.findClosestByRange(FIND_MY_CREEPS, {
+                filter: (creep) => creep.hits < creep.hitsMax
+            });
+            if(closestHurtCreep) {
+                tower.heal(closestHurtCreep);
+            }
+            // Repair buildings
             let closestDamagedStructure = tower.pos.findClosestByRange(FIND_STRUCTURES, {
                 filter: (structure) => structure.hits < structure.hitsMax
             });
             if(closestDamagedStructure) {
                 tower.repair(closestDamagedStructure);
             }
-    
+            // Attack hostiles
             let closestHostile = tower.pos.findClosestByRange(FIND_HOSTILE_CREEPS);
             if(closestHostile) {
                 tower.attack(closestHostile);

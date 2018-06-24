@@ -1,3 +1,6 @@
+// https://docs.screeps.com/api/#Constants
+// https://docs.screeps.com/api/#Creep
+
 // Game.spawns['Spawn1'].room.controller.activateSafeMode();
 // Game.spawns['Spawn1'].spawnCreep( [WORK,WORK,CARRY,MOVE],'a',{ memory: { role: 'harvester' } } );
 // Game.creeps['a'].move(TOP);
