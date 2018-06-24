@@ -20,9 +20,8 @@ module.exports = {
                     creep.moveTo(remoteRoomPos, {visualizePathStyle: {stroke: '#ffffff'}});
                 } else {
                     let source = remoteRoom.find(FIND_SOURCES)[0];
-                    creep.memory.action = "mining";
-                    if (creep.harvest(source) == ERR_NOT_IN_RANGE) {
-                        creep.moveTo(source, {visualizePathStyle: {stroke: '#ffffff'}});
+                    if (tasks.mineSource(creep, source)) {
+                        creep.memory.action = "mining";
                     }
                 }
                 break;
@@ -40,12 +39,7 @@ module.exports = {
                 } else {
                     creep.moveTo(target);
                 }
-                // let target = myRoom.controller;
-                // if(creep.upgradeController(target) == ERR_NOT_IN_RANGE) {
-                //     creep.moveTo(target, {visualizePathStyle: {stroke: '#ffffff'}});
-                // }
                 break;
         }
-//        creep.say(creep.memory.action);
 	}
 };

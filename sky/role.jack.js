@@ -1,7 +1,7 @@
 let tasks = require('tasks');
 
 module.exports = {
-    run: function(creep, tombstones) {
+    run: function(creep) {
         
         if (creep.carry.energy == creep.carryCapacity) {
             creep.memory.mode = "emptying";
@@ -25,6 +25,12 @@ module.exports = {
             case "emptying":
                 if (tasks.supplySpawns(creep)) {
                     creep.memory.action = "supplying";
+                } else if (tasks.repairStructures(creep)) {
+                    creep.memory.action = "repairing";
+                } else if (tasks.buildStructures(creep)) {
+                    creep.memory.action = "building";
+                } else if (tasks.upgradeController(creep)) {
+                    creep.memory.action = "upgrading";
                 } else {
                     creep.memory.action = "idling";
                 }

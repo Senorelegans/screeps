@@ -11,7 +11,7 @@ module.exports = {
         
         switch (creep.memory.mode) {
             case "filling":
-                if (tasks.pickupNearestEnergy(creep)) {
+                if (tasks.pickupDropped(creep)) {
                     creep.memory.action = "picking up gil";
                 } else if (tasks.withdrawNearestEnergy(creep)) {
                     creep.memory.action = "withdrawing";

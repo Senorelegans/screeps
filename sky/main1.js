@@ -4,7 +4,7 @@
 // https://github.com/bonzaiferroni/bonzAI/wiki/Traveler-API
 
 let support = require('support');
-let roleHarvester = require('role.harvester');
+let roleJack = require('role.jack');
 let roleRecycle = require('role.recycle');
 
 module.exports.loop = function () {
@@ -21,7 +21,7 @@ module.exports.loop = function () {
     // Creep census
     let roles = {
         'recycle': {amount:0, actions:roleRecycle},
-        'harvester': {amount:4, parts:[WORK,WORK,CARRY,MOVE], cost:300, actions:roleHarvester},
+        'harvester': {amount:4, parts:[WORK,WORK,CARRY,MOVE], cost:300, actions:roleJack},
     };
 
     // Spawn

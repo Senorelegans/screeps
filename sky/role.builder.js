@@ -2,7 +2,6 @@ let tasks = require('tasks');
 
 module.exports = {
     run: function(creep) {
-        // toggle empty/full status
         if (creep.carry.energy == creep.carryCapacity) {
             creep.memory.mode = "emptying";
         } else if (creep.carry.energy == 0) {
@@ -11,35 +10,24 @@ module.exports = {
         
         switch (creep.memory.mode) {
             case "filling":
-                let source = Game.getObjectById(creep.memory.sourceid);
-                creep.memory.action = "mining";
-                if (creep.harvest(source) == ERR_NOT_IN_RANGE) {
-                    creep.moveTo(source, {visualizePathStyle: {stroke: '#ffffff'}});
+                if (tasks.pickupDropped(creep)) {
+                    creep.memory.action = "picking up gil";
+                } else if (tasks.withdrawNearestEnergy(creep)) {
+                    creep.memory.action = "withdrawing";
+                } else if (tasks.mineNearestSource(creep)) {
+                    creep.memory.action = "mining";
+                } else {
+                    creep.memory.action = "idling";
                 }
                 break;
                 
             case "emptying":
-                let target = undefined;
-                
-                // Check for repairs
-                const damaged = creep.room.find(FIND_STRUCTURES, {filter: object => object.hits < object.hitsMax});
-                if (damaged.length > 0) {
-                    damaged.sort((a,b) => a.hits - b.hits);
-                    target = damaged[0];
-                    if(creep.repair(target) == ERR_NOT_IN_RANGE) {
-                        creep.moveTo(target);
-                    }
-                    return;
-                }
-                
-                // Check building sites
-                let sites = creep.room.find(FIND_CONSTRUCTION_SITES);
-                if (sites.length > 0) {
-                    target = sites[0];
-                    if(creep.build(target) == ERR_NOT_IN_RANGE) {
-                        creep.moveTo(target, {visualizePathStyle: {stroke: '#ffffff'}});
-                    }
-                    return;
+                if (tasks.repairStructures(creep)) {
+                    creep.memory.action = "repairing";
+                } else if (tasks.buildStructures(creep)) {
+                    creep.memory.action = "building";
+                } else {
+                    creep.memory.action = "idling";
                 }
                 break;
         }

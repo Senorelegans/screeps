@@ -11,10 +11,8 @@
 */
 
 let support = require('support');
-let roleHarvester = require('role.harvester');
 let roleMiner = require('role.miner');
 let roleHyperMiner = require('role.hyperminer');
-let roleDistributor = require('role.distributor');
 let roleUpgrader = require('role.upgrader');
 let roleBuilder = require('role.builder');
 let roleSupplier = require('role.supplier');
@@ -24,6 +22,7 @@ let roleArcher = require('role.archer');
 let roleMedic = require('role.medic');
 let roleMessenger = require('role.messenger');
 let roleLonghauler = require('role.longhauler');
+let roleJack = require('role.jack');
 
 module.exports.loop = function () {
     const spawnername = "Spawn1";
@@ -52,9 +51,9 @@ module.exports.loop = function () {
         'supplier': {amount:0, parts:[CARRY,CARRY,MOVE,MOVE], cost:200, actions:roleSupplier},
         'upgrader': {amount:2, parts:[WORK,WORK,WORK,WORK,CARRY,MOVE,MOVE], cost:550, actions:roleUpgrader},
         'hyperminer': {amount:1, parts:[WORK,WORK,WORK,WORK,WORK,MOVE], cost:550, actions:roleHyperMiner},
-        'distributor': {amount:2, parts:[WORK,WORK,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE], cost:500, actions:roleDistributor},
+        'distributor': {amount:2, parts:[WORK,WORK,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE], cost:500, actions:roleJack},
         'miner': {amount:0, parts:[WORK,WORK,WORK,WORK,CARRY,MOVE], cost:500, actions:roleMiner},
-        'harvester': {amount:0, parts:[WORK,WORK,CARRY,MOVE], cost:300, actions:roleHarvester},
+        'harvester': {amount:0, parts:[WORK,WORK,CARRY,MOVE], cost:300, actions:roleJack},
     };
     // console.log("cost:", support.getCost(roles.grunt.parts));
 

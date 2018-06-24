@@ -11,22 +11,22 @@ module.exports = {
         
         switch (creep.memory.mode) {
             case "filling":
-                if (tasks.pickupNearestEnergy(creep)) {
+                if (tasks.pickupDropped(creep)) {
                     creep.memory.action = "picking up gil";
                 } else if (tasks.withdrawNearestEnergy(creep)) {
                     creep.memory.action = "withdrawing";
                 } else if (tasks.mineNearestSource(creep)) {
                     creep.memory.action = "mining";
                 } else {
-                    creep.memory.action = "stalling";
+                    creep.memory.action = "idling";
                 }
                 break;
 
             case "emptying":
-                creep.memory.action = "upgrading";
-                let target = creep.room.controller;
-                if(creep.upgradeController(target) == ERR_NOT_IN_RANGE) {
-                    creep.moveTo(target, {visualizePathStyle: {stroke: '#ffffff'}});
+                if (tasks.upgradeController(creep)) {
+                    creep.memory.action = "upgrading";
+                } else {
+                    creep.memory.action = "idling";
                 }
                 break;
         }

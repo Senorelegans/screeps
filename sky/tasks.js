@@ -23,14 +23,66 @@ module.exports = {
         }
     },
 
-    // Picks up energy laying around
+    // Transfers energy to spawns, extensions, and towers
+    supplySpawns: function(creep) {
+        let target = creep.pos.findClosestByPath(FIND_STRUCTURES, {
+            filter: (structure) => {
+                return (structure.structureType == STRUCTURE_EXTENSION ||
+                        structure.structureType == STRUCTURE_SPAWN ||
+                        structure.structureType == STRUCTURE_TOWER) &&
+                        structure.energy < structure.energyCapacity;
+            }
+        });
+        if (target) {
+            if (creep.transfer(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+                creep.moveTo(target);
+            }
+            return true;
+        } else {
+            return false;
+        }
+    },
+
+    repairStructures: function(creep) {
+        let target = creep.pos.findClosestByPath(FIND_STRUCTURES, {filter: structure => structure.hits < structure.hitsMax});
+        if (target) {
+            if(creep.repair(target) == ERR_NOT_IN_RANGE) {
+                creep.moveTo(target);
+            }
+            return true;
+        } else {
+            return false;
+        }
+    },
+
+    buildStructures: function(creep) {
+        let target = creep.pos.findClosestByPath(FIND_CONSTRUCTION_SITES);
+        if (target) {
+            if(creep.repair(target) == ERR_NOT_IN_RANGE) {
+                creep.moveTo(target);
+            }
+            return true;
+        } else {
+            return false;
+        }
+    },
+    
+    upgradeController: function(creep) {
+        target = creep.room.controller;
+        if(creep.upgradeController(target) == ERR_NOT_IN_RANGE) {
+            creep.moveTo(target);
+        }
+        return true;
+    },
+
+    // Picks up resources laying around
     // Returns true if picking up
     // Returns false if no energy on ground
-    pickupNearestEnergy: function(creep) {
-        const gil = creep.pos.findClosestByPath(FIND_DROPPED_RESOURCES);
-        if (gil) {
-            if (creep.pickup(gil) == ERR_NOT_IN_RANGE) {
-                creep.moveTo(gil);
+    pickupDropped: function(creep) {
+        const junk = creep.pos.findClosestByPath(FIND_DROPPED_RESOURCES);
+        if (junk) {
+            if (creep.pickup(junk) == ERR_NOT_IN_RANGE) {
+                creep.moveTo(junk);
             }
             return true;
         } else {
