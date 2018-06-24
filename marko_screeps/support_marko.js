@@ -1,4 +1,4 @@
-module.exports = {
+let self = module.exports = {
     // Print JSON objects
     print: function(obj) {
         console.log(JSON.stringify(obj));
@@ -25,6 +25,44 @@ module.exports = {
         return AREA;
     },
 
+    Pattern: function(AREA, TOP, LEFT, BOTTOM, RIGHT, pattern) {
+        if (pattern="none") {
+            return AREA;
+        }
+        if (pattern ="checkerboard") {
+            for (y = TOP; y <= BOTTOM; y++) {
+                // console.log("y is :"+ y);
+                for (x = LEFT; x <= RIGHT; x++) {
+                    let tile = AREA[y][x];
+                    console.log("x is :" + x);
+                    console.log(AREA[y][x]);
+                    console.log(JSON.stringify(AREA[y][x]));
+                }
+            }
+
+        }
+    },
+
+    getTilesInAreaWithPattern: function(target, radius, pattern, asArray) {
+        var pos = target.pos;
+        let TOP = pos.y - radius;
+        let LEFT = pos.x - radius;
+        let BOTTOM = pos.y + radius;
+        let RIGHT = pos.x + radius;
+        let W = RIGHT - LEFT;
+        let H =  BOTTOM - TOP;
+        let AREA = target.room.lookAtArea(TOP, LEFT, BOTTOM, RIGHT, asArray);
+        AREA = self.Pattern(AREA, TOP, LEFT, BOTTOM, RIGHT, pattern);
+        return AREA;
+    },
+
+
+
+
+
+
+
+
     dir: {
         1 : {name:"TOP", dx:0, dy:-1},
         2 : {name:"TOP_RIGHT", dx:1, dy:-1},
@@ -35,6 +73,12 @@ module.exports = {
         7 : {name:"LEFT", dx:-1, dy:0},
         8 : {name:"TOP_LEFT", dx:-1, dy:-1},
     },
+
+
+
+
+
+
     
     // Calculate cost of a set of parts
     getCost: function(parts) {

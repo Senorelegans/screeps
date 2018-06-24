@@ -11,7 +11,6 @@ module.exports = {
             case "filling":
                 const gil = creep.pos.findClosestByRange(FIND_DROPPED_RESOURCES);
                 if (gil) {
-                    creep.memory.action = "picking up gold";
                     if (creep.pickup(gil) == ERR_NOT_IN_RANGE) {
                         creep.moveTo(gil);
                         return;
@@ -29,14 +28,28 @@ module.exports = {
                     }
                 }
                 break;
-
+                
             case "emptying":
-                creep.memory.action = "upgrading";
-                let target = creep.room.controller;
-                if(creep.upgradeController(target) == ERR_NOT_IN_RANGE) {
-                    creep.moveTo(target, {visualizePathStyle: {stroke: '#ffffff'}});
+                creep.memory.action = "distributing";
+                
+                let target = undefined;
+                
+                // Check structures
+                let targets = creep.room.find(FIND_STRUCTURES, {
+                    filter: (structure) => {
+                        return (structure.structureType == STRUCTURE_EXTENSION ||
+                                structure.structureType == STRUCTURE_SPAWN ||
+                                structure.structureType == STRUCTURE_TOWER) && structure.energy < structure.energyCapacity;
+                    }
+                });
+                if (targets.length > 0) {
+                    target = targets[0];
+                    if (creep.transfer(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+                        creep.moveTo(target);
+                    }
+                    return;
                 }
-                break;
         }
+//        creep.say(creep.memory.action);
 	}
 };
