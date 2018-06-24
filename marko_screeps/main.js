@@ -13,8 +13,6 @@ module.exports.loop = function () {
     const spawner = "Spawn1";
 
     // Get tiles around a tile
-
-
     thing = Game.spawns[spawner]; // can be spawner, creep, resource
     var tile = thing.pos;
     add_area = 1; // amount around your tile you will add.
@@ -23,33 +21,18 @@ module.exports.loop = function () {
     let LEFT = tile.x-add_area;
     let BOTTOM = tile.y+add_area;
     let RIGHT = tile.x+add_area;
-    let W = LEFT - RIGHT; // width
-    let H = TOP - BOTTOM; // heigth
+    let W = RIGHT-LEFT; // width
+    let H =  BOTTOM-TOP; // heigth
     let AREA = thing.room.lookAtArea(TOP,LEFT,BOTTOM,RIGHT); // 37 and 11
-    // let AREA = thing.room.lookAtArea(TOP,LEFT,BOTTOM,RIGHT); // 37 and 11
 
-    console.log(AREA);
-    console.log(AREA[37]);
-    console.log(JSON.stringify(AREA[TOP]));
-
-    const look = thing.room.lookAtArea(10,5,11,7);
-    // console.log(look);
-    // console.log(look[10]);
-
-    // // console.log(JSON.stringify(look[10]));
-    // console.log(JSON.stringify(look[37][6]) );
-
-    // console.log(AREA[37][j])
-    //
-    // //
-    // for (i = BOTTOM; i <= BOTTOM+H; i++) {
-    //         console.log("i is :"+ i);
-    //         for (j = LEFT; j <= LEFT+W; j++){
-    //             console.log("j is :"+ j);
-    //             console.log(AREA[TOP][BOTTOM]);
-    //
-    //         }
-    // }
+    for (y = TOP; y <= BOTTOM; y++) {
+            console.log("y is :"+ y);
+            for (x = LEFT; x <= RIGHT; x++){
+                console.log("x is :"+ x);
+                console.log(AREA[y][x]);
+                console.log(JSON.stringify(AREA[y][x]));
+            }
+    }
 
 
 
