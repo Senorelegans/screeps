@@ -166,7 +166,7 @@ module.exports.loop = function () {
     }
     
     // Draw antcrumb values on map, build roads at any tiles exceeding ROADLIMIT
-    const ROADLIMIT = 9;
+    const ROADLIMIT = 50;
     for (tile of Object.keys(Memory.antcrumbs)) {
         const pos = tile.split(",");
         // MYROOM.visual.text(Memory.antcrumbs[tile], Number(pos[0]), Number(pos[1]), {font: "12px"});
