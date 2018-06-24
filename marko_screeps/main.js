@@ -10,30 +10,8 @@ let support = require('support');
 module.exports.loop = function () {
     support.erasedead();
 
-
-
     const spawner = "Spawn1";
-    spawnroom = Game.spawns[spawner].room;
-
-    knownrooms = Game.rooms;
-    // console.log(knownrooms)
-    // console.log(Game.spawns[spawner].room);
-    // console.log(Game.spawns['Spawn1']);
-    // Game.spawns['Spawn1'];
-
-    RCL_progress = Game.spawns[spawner].room.controller.progress;
-    RCL_progress_total = Game.spawns[spawner].room.controller.progressTotal;
-    RCL = (Game.spawns[spawner].room.controller.level);
-
-
-    let resources_list = Game.spawns[spawner].room.find(FIND_SOURCES);
-
-    resource1 = resources_list[0];
-
-
     
-    thing = Game.spawns[spawner]
-
 
     var tile = thing.pos;
     add_area = 1; // amount around your tile you will add.
@@ -45,7 +23,7 @@ module.exports.loop = function () {
     let W = LEFT - RIGHT; // width
     let H = TOP - BOTTOM; // heigth
     let AREA = thing.room.lookAtArea(TOP,LEFT,BOTTOM,RIGHT); // 37 and 11
-    let AREA = thing.room.lookAtArea(TOP,LEFT,BOTTOM,RIGHT); // 37 and 11
+    // let AREA = thing.room.lookAtArea(TOP,LEFT,BOTTOM,RIGHT); // 37 and 11
 
     console.log(JSON.stringify(AREA[TOP]));
     console.log(AREA[37]);
@@ -69,6 +47,38 @@ module.exports.loop = function () {
     //
     //         }
     // }
+
+
+
+
+
+
+
+
+
+
+
+    spawnroom = Game.spawns[spawner].room;
+
+    knownrooms = Game.rooms;
+    // console.log(knownrooms)
+    // console.log(Game.spawns[spawner].room);
+    // console.log(Game.spawns['Spawn1']);
+    // Game.spawns['Spawn1'];
+
+    RCL_progress = Game.spawns[spawner].room.controller.progress;
+    RCL_progress_total = Game.spawns[spawner].room.controller.progressTotal;
+    RCL = (Game.spawns[spawner].room.controller.level);
+
+
+    let resources_list = Game.spawns[spawner].room.find(FIND_SOURCES);
+
+    resource1 = resources_list[0];
+
+
+
+    thing = Game.spawns[spawner]
+
 
     // for (let object in Area) {
     //     tiles = JSON.stringify(Area[object]);
