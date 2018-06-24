@@ -1,6 +1,5 @@
 module.exports = {
     run: function(creep) {
-        // creep.say("*grunt*");
         
         // Rally to most recent flag
         const flags = creep.room.find(FIND_FLAGS);
@@ -10,6 +9,7 @@ module.exports = {
             creep.moveTo(flags[flags.length-1]);
         }
 
+        // Focus only on one target
         let chase = function(target) {
             let result = creep.attack(target);
             if (result = ERR_NOT_IN_RANGE) {
@@ -17,6 +17,7 @@ module.exports = {
             }
         }
 
+        // Move toward the weakest targets while attacking anything in range
         let fight = function(targets) {
             let hittarget = targets[0];
             let movetarget = targets[0];
@@ -34,9 +35,7 @@ module.exports = {
             creep.moveTo(movetarget);
         }
 
-        const a = Game.creeps["archer7323793"];
-        // chase(a);
-
+        // Fight hostiles
         const hostiles = creep.room.find(FIND_HOSTILE_CREEPS);
         if (hostiles.length > 0) {
             fight(hostiles);

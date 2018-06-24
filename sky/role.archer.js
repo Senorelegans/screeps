@@ -2,8 +2,6 @@ let support = require('support');
 
 module.exports = {
     run: function(creep) {
-        // creep.say("pew pew");
-
         // Rally to most recent flag
         const flags = creep.room.find(FIND_FLAGS);
         if (flags.length > 0) {
@@ -12,8 +10,7 @@ module.exports = {
             creep.moveTo(flags[flags.length-1]);
         }
         
-        // console.log(JSON.stringify(creep.room.lookForAt(LOOK_STRUCTURES, 35, 20)));
-
+        // Shoot an enemy while staying away from it
         let kite = function(target) {
             let result = creep.rangedAttack(target);
             switch (result) {
@@ -52,9 +49,7 @@ module.exports = {
             }
         }
 
-        let g = Game.creeps["grunt7323834"];
-        // kite(g);
-
+        // Find closest hostile and kite it
         let hostiles = creep.room.find(FIND_HOSTILE_CREEPS);
         if (hostiles.length > 0) {
             hostiles.sort(function(a,b) {

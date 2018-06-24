@@ -1,6 +1,5 @@
 module.exports = {
     run: function(creep) {
-        // creep.say("healy");
 
         // Rally to most recent flag
         const flags = creep.room.find(FIND_FLAGS);
@@ -10,6 +9,7 @@ module.exports = {
             creep.moveTo(flags[flags.length-1]);
         }
         
+        // Move toward the most damaged friendly while healing the most damaged friendlies along the way
         let triage = function(targets) {
             let healtarget = targets[0];
             let movetarget = targets[0];
@@ -29,6 +29,7 @@ module.exports = {
             }
         }
 
+        // Heal the room
         const friendlies = creep.room.find(FIND_MY_CREEPS);
         triage(friendlies);
 	}
