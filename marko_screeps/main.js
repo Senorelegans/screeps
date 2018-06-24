@@ -27,13 +27,23 @@ module.exports.loop = function () {
     let AREA = thing.room.lookAtArea(TOP,LEFT,BOTTOM,RIGHT); // 37 and 11
 
     for (y = TOP; y <= BOTTOM; y++) {
-            console.log("y is :"+ y);
+            // console.log("y is :"+ y);
             for (x = LEFT; x <= RIGHT; x++){
-                console.log("x is :"+ x);
-                console.log(AREA[y][x]);
-                console.log(JSON.stringify(AREA[y][x]));
+                let tile = AREA[y][x];
+                // console.log("x is :"+ x);
+                // console.log(AREA[y][x]);
+                // console.log(JSON.stringify(AREA[y][x]));
             }
     }
+
+    //[7:34:44 PM] [shard2][object Object],[object Object]
+    // [7:34:44 PM] [shard2][{"type":"structure","structure":{"room":{"name":"E29N54","energyAvailable":300,"energyCapacityAvailable":300,"visual":{"roomName":"E29N54"}},"pos":{"x":37,"y":12,"roomName":"E29N54"},"id":"5b2e9614f250a2379dbc6810","energy":0,"energyCapacity":50,"owner":{"username":"creepyscreepy"},"my":true,"hits":1000,"hitsMax":1000,"structureType":"extension"}},{"type":"terrain","terrain":"plain"}]
+    // [7:34:44 PM] [shard2]x is :38
+    // [7:34:44 PM] [shard2][object Object],[object Object]
+    // [7:34:44 PM] [shard2][{"type":"constructionSite","constructionSite":{"room":{"name":"E29N54","energyAvailable":300,"energyCapacityAvailable":300,"visual":{"roomName":"E29N54"}},"pos":{"x":38,"y":12,"roomName":"E29N54"},"id":"5b2eade0d58d946913c82b3a","progress":0,"progressTotal":300,"structureType":"road","owner":{"username":"creepyscreepy"},"my":true}},{"type":"terrain","terrain":"plain"}]
+    //
+    // 
+
 
 
     spawnroom = Game.spawns[spawner].room;
@@ -48,6 +58,16 @@ module.exports.loop = function () {
 
     resource1 = resources_list[0];
 
+    let sites = Game.spawns[spawner].room.find(FIND_CONSTRUCTION_SITES);
+    // console.log(sites[0].id);
+    for (var site in sites) {
+        sites[site].remove();
+    }
+
+    // const construction_sites = Game.spawns['Spawn1'].room.find(FIND_CONSTRUCTION_SITES)
+
+    // });
+    // console.log('Spawn has '+extensions.length+' extensions available');
 
 
     // console.log("Room lvl: " + RCL);
