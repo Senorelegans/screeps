@@ -56,34 +56,6 @@ module.exports = {
                         }
                     }
                 }
-                
-                // Check for repairs
-                const damaged = creep.room.find(FIND_STRUCTURES, {filter: object => object.hits < object.hitsMax});
-                if (damaged.length > 0) {
-                    damaged.sort((a,b) => a.hits - b.hits);
-                    target = damaged[0];
-                    if(creep.repair(target) == ERR_NOT_IN_RANGE) {
-                        creep.moveTo(target);
-                    }
-                    return;
-                }
-                
-                // Check building sites
-                let sites = creep.room.find(FIND_CONSTRUCTION_SITES);
-                if (sites.length > 0) {
-                    target = sites[0];
-                    if(creep.build(target) == ERR_NOT_IN_RANGE) {
-                        creep.moveTo(target, {visualizePathStyle: {stroke: '#ffffff'}});
-                    }
-                    return;
-                }
-                
-                // Check room controller
-                target = creep.room.controller;
-                if(creep.upgradeController(target) == ERR_NOT_IN_RANGE) {
-                    creep.moveTo(target, {visualizePathStyle: {stroke: '#ffffff'}});
-                }
-                break;
         }
 //        creep.say(creep.memory.action);
 	}

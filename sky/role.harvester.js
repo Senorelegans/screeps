@@ -7,14 +7,20 @@ module.exports = {
             creep.memory.mode = "filling";
         }
         
-        
-        
         switch (creep.memory.mode) {
             case "filling":
-                let source = Game.getObjectById(creep.memory.sourceid);
-                creep.memory.action = "mining";
-                if (creep.harvest(source) == ERR_NOT_IN_RANGE) {
-                    creep.moveTo(source, {visualizePathStyle: {stroke: '#ffffff'}});
+                const gil = creep.pos.findClosestByRange(FIND_DROPPED_RESOURCES);
+                if (gil) {
+                    if (creep.pickup(gil) == ERR_NOT_IN_RANGE) {
+                        creep.moveTo(gil);
+                        return;
+                    }
+                } else {
+                    let source = Game.getObjectById(creep.memory.sourceid);
+                    creep.memory.action = "mining";
+                    if (creep.harvest(source) == ERR_NOT_IN_RANGE) {
+                        creep.moveTo(source, {visualizePathStyle: {stroke: '#ffffff'}});
+                    }
                 }
                 break;
                 

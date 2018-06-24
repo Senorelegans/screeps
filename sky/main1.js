@@ -5,71 +5,57 @@
 
 let support = require('support');
 let roleHarvester = require('role.harvester');
-let roleMiner = require('role.miner');
-let roleDistributor = require('role.distributor');
-let roleRoadBuilder = require('role.roadbuilder');
 let roleRecycle = require('role.recycle');
-
-let antcrumbs = {};
 
 module.exports.loop = function () {
     // Names for units
-    const spawner = "Spawn1";
+    const spawnername = "Spawn1";
+    const MYSPAWNER = Game.spawns[spawnername];
+    const MYROOM = MYSPAWNER.room;
 
     support.erasedead();
     
     // Get lists
-    const mystructures = Game.spawns[spawner].room.find(FIND_MY_STRUCTURES);
-    const sources = Game.spawns[spawner].room.find(FIND_SOURCES);
-    const extensions = Game.spawns[spawner].room.find(FIND_MY_STRUCTURES, {filter: { structureType: STRUCTURE_EXTENSION }});
-    const containers = Game.spawns[spawner].room.find(FIND_STRUCTURES, {filter: { structureType: STRUCTURE_CONTAINER }});
+    const sources = MYSPAWNER.room.find(FIND_SOURCES);
     
     // Creep census
     let roles = {
         'recycle': {amount:0, actions:roleRecycle},
         'harvester': {amount:4, parts:[WORK,WORK,CARRY,MOVE], cost:300, actions:roleHarvester},
     };
-//    console.log("distributor", support.getCost(roles.distributor.parts));
-//            console.log(Game.spawns[spawner].room.energyAvailable);
+
+    // Spawn
     for (let role of Object.keys(roles)) {
         var census =  _.filter(Game.creeps, (creep) => creep.memory.role == role);
         if(census.length < roles[role].amount) {
             var newName = role + Game.time;
             let memory = {role: role};
             switch (role) {
-                case 'miner':
-                    memory.containerid = containers[0].id;
-                    memory.sourceid = sources[0].id;
-                    break;
                 case 'harvester':
                     memory.sourceid = sources[0].id;
                     break;
-                case 'distributor':
-                    memory.containerid = containers[0].id;
-                    break;
             }
-//            console.log("Spawning", role);
-            Game.spawns[spawner].spawnCreep(roles[role].parts, newName, {memory: memory})
+            MYSPAWNER.spawnCreep(roles[role].parts, newName, {memory: memory})
         }
     }
 
     // If spawning, make a notification
-    if (Game.spawns[spawner].spawning) { 
-        var spawningCreep = Game.creeps[Game.spawns[spawner].spawning.name];
-        Game.spawns[spawner].room.visual.text(
+    if (MYSPAWNER.spawning) { 
+        var spawningCreep = Game.creeps[MYSPAWNER.spawning.name];
+        MYROOM.visual.text(
             '🛠️' + spawningCreep.memory.role,
-            Game.spawns[spawner].pos.x + 0, 
-            Game.spawns[spawner].pos.y + 1, 
+            MYSPAWNER.pos.x + 0, 
+            MYSPAWNER.pos.y + 1, 
             {align: 'center', opacity: 0.2});
     }
     
     // Run creep roles
     for(let name in Game.creeps) {
         let creep = Game.creeps[name];
-        roles[creep.memory.role].actions.run(creep);
-        antcrumbs[creep.pos] += 1;
-    }
-    for (tile of Object.keys(antcrumbs)) {
-        Game.spawns[spawner].room.visual.text(antcrumbs[tile], tile.x, tile.y, {font: "10px"});
-    }
+        // Can pass extra variables to certain roles
+        switch (creep.memory.role) {
+            default:
+                roles[creep.memory.role].actions.run(creep);
+        }
+    } 
 }

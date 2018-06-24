@@ -8,8 +8,13 @@ let roleHarvester = require('role.harvester');
 let roleMiner = require('role.miner');
 let roleHyperMiner = require('role.hyperminer');
 let roleDistributor = require('role.distributor');
-let roleRoadBuilder = require('role.roadbuilder');
+let roleUpgrader = require('role.upgrader');
+let roleBuilder = require('role.builder');
+let roleSupplier = require('role.supplier');
 let roleRecycle = require('role.recycle');
+let roleGrunt = require('role.grunt');
+let roleArcher = require('role.archer');
+let roleMedic = require('role.medic');
 
 module.exports.loop = function () {
     const spawnername = "Spawn1";
@@ -20,6 +25,7 @@ module.exports.loop = function () {
     
     // Get lists
     const mystructures = MYROOM.find(FIND_MY_STRUCTURES);
+    const myconstructions = MYROOM.find(FIND_MY_CONSTRUCTION_SITES);
     const sources = MYROOM.find(FIND_SOURCES);
     const extensions = MYROOM.find(FIND_MY_STRUCTURES, {filter: { structureType: STRUCTURE_EXTENSION }});
     const containers = MYROOM.find(FIND_STRUCTURES, {filter: { structureType: STRUCTURE_CONTAINER }});
@@ -28,13 +34,45 @@ module.exports.loop = function () {
     // Creep census
     let roles = {
         'recycle': {amount:0, actions:roleRecycle},
-        'builder': {amount:0, parts:[WORK,WORK,CARRY,MOVE], cost:300, actions:roleRoadBuilder},
-        'distributor': {amount:4, parts:[WORK,WORK,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE], cost:500, actions:roleDistributor},
-        'miner': {amount:0, parts:[WORK,WORK,WORK,WORK,CARRY,MOVE], cost:500, actions:roleMiner},
+        'medic': {amount:1, parts:[MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,HEAL], cost:550, actions:roleMedic},
+        'archer': {amount:1, parts:[MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,RANGED_ATTACK], cost:550, actions:roleArcher},
+        'grunt': {amount:1, parts:[TOUGH,TOUGH,TOUGH,TOUGH,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,ATTACK,ATTACK], cost:550, actions:roleGrunt},
+        'builder': {amount:0, parts:[WORK,WORK,CARRY,MOVE], cost:300, actions:roleBuilder},
+        'supplier': {amount:0, parts:[CARRY,CARRY,MOVE,MOVE], cost:200, actions:roleSupplier},
+        'upgrader': {amount:2, parts:[WORK,WORK,WORK,WORK,CARRY,MOVE,MOVE], cost:550, actions:roleUpgrader},
         'hyperminer': {amount:1, parts:[WORK,WORK,WORK,WORK,WORK,MOVE], cost:550, actions:roleHyperMiner},
+        'distributor': {amount:2, parts:[WORK,WORK,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE], cost:500, actions:roleDistributor},
+        'miner': {amount:0, parts:[WORK,WORK,WORK,WORK,CARRY,MOVE], cost:500, actions:roleMiner},
+        'harvester': {amount:0, parts:[WORK,WORK,CARRY,MOVE], cost:300, actions:roleHarvester},
     };
-//    console.log("distributor", support.getCost(roles.distributor.parts));
-//            console.log(MYROOM.energyAvailable);
+//    console.log("cost:", support.getCost(roles.grunt.parts));
+    
+    let tiles = support.getTilesInArea(MYSPAWNER, 2, true);
+    for (let tile of tiles) {
+        if (tile.structure == undefined) {
+            // console.log(tile.x, tile.y);
+        }
+    }
+    
+    if (MYROOM.energyCapacityAvailable < 550) {
+        let extensionsNeeded = 5 - extensions.length;
+        for (let construction of myconstructions) {
+            if (construction.structureType == STRUCTURE_EXTENSION) {
+                extensionsNeeded--;
+            }
+        }
+        // const parity = (MYSPAWNER.pos.x + MYSPAWNER.pos.y) % 2;
+        // while (extensionsNeeded > 0) {
+        //     let tiles = support.getTilesInArea(MYSPAWNER, 2, true);
+        //     for (let tile of tiles) {
+        //         if (tile.structure == undefined && (tile.x + tile.y) % 2 == parity) {
+        //             MYROOM.createConstructionSite(tile.x, tile.y, STRUCTURE_EXTENSION);
+        //             extensionsNeeded--;
+        //         }
+        //     }
+        // }
+    }    
+    
     for (let role of Object.keys(roles)) {
         var census =  _.filter(Game.creeps, (creep) => creep.memory.role == role);
         if(census.length < roles[role].amount) {
@@ -42,17 +80,15 @@ module.exports.loop = function () {
             let memory = {role: role};
             switch (role) {
                 case 'hyperminer':
-                    memory.sourceid = sources[0].id;
-                    break;
-                case 'miner':
-                    memory.containerid = containers[0].id;
-                    memory.sourceid = sources[0].id;
-                    break;
                 case 'harvester':
                     memory.sourceid = sources[0].id;
-                    break;
-                case 'distributor':
+                case 'miner':
                     memory.containerid = containers[0].id;
+                    break;
+                case 'supplier':
+                case 'builder':
+                case 'distributor':
+                    memory.containerids = [containers[0].id, containers[1].id];
                     break;
             }
 //            console.log("Spawning", role);
@@ -92,7 +128,7 @@ module.exports.loop = function () {
             creep.memory.lastpos = {x:creep.pos.x, y:creep.pos.y};
             if (Memory.antcrumbs[[creep.pos.x, creep.pos.y]] == undefined) {
                 Memory.antcrumbs[[creep.pos.x, creep.pos.y]] = 1;
-            } else {
+            } else if (Memory.antcrumbs[[creep.pos.x, creep.pos.y]] < 99) {
                 Memory.antcrumbs[[creep.pos.x, creep.pos.y]] += 1;
             }
         }
@@ -102,9 +138,28 @@ module.exports.loop = function () {
     const ROADLIMIT = 9;
     for (tile of Object.keys(Memory.antcrumbs)) {
         const pos = tile.split(",");
-        MYROOM.visual.text(Memory.antcrumbs[tile], Number(pos[0]), Number(pos[1]), {font: "12px"});
+        // MYROOM.visual.text(Memory.antcrumbs[tile], Number(pos[0]), Number(pos[1]), {font: "12px"});
         if (Memory.antcrumbs[tile] > ROADLIMIT) {
             MYROOM.createConstructionSite(Number(pos[0]), Number(pos[1]), STRUCTURE_ROAD);
         }
+    }
+    
+    // Do some logic less often than every tick
+    const SLOWUPDATETICKS = 50;
+    if (Memory.slowupdate == undefined) {
+        Memory.slowupdate = SLOWUPDATETICKS;
+    } else if (Memory.slowupdate <= Game.time) {
+        Memory.slowupdate = Game.time + SLOWUPDATETICKS;
+        // Slow update logic
+        for (tile of Object.keys(Memory.antcrumbs)) {
+            if (Memory.antcrumbs[tile] > 1) {
+                Memory.antcrumbs[tile]--;
+            } else {
+                Memory.antcrumbs[tile] = undefined;
+            }
+        }
+
+        MYROOM.controller.activateSafeMode();
+        // End slow update logic
     }
 }
