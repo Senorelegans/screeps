@@ -19,9 +19,9 @@ module.exports.loop = function () {
     var tile = thing.pos;
     add_area = 1; // amount around your tile you will add.
     console.log(tile);
-    let TOP = tile.y+add_area;
+    let TOP = tile.y-add_area;
     let LEFT = tile.x-add_area;
-    let BOTTOM = tile.y-add_area;
+    let BOTTOM = tile.y+add_area;
     let RIGHT = tile.x+add_area;
     let W = LEFT - RIGHT; // width
     let H = TOP - BOTTOM; // heigth
