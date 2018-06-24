@@ -11,6 +11,7 @@ let support = require('support');
 module.exports.loop = function () {
     support.erasedead();
 
+
     const spawner = "Spawn1";
 
     // Get tiles around a tile
@@ -58,11 +59,6 @@ module.exports.loop = function () {
 
     resource1 = resources_list[0];
 
-    let sites = Game.spawns[spawner].room.find(FIND_CONSTRUCTION_SITES);
-    // console.log(sites[0].id);
-    for (var site in sites) {
-        sites[site].remove();
-    }
 
     // const construction_sites = Game.spawns['Spawn1'].room.find(FIND_CONSTRUCTION_SITES)
 
