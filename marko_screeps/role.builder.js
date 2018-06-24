@@ -2,8 +2,6 @@ module.exports = {
     run: function(creep) {
         // toggle empty/full status
         const extensions = creep.room.find(FIND_MY_STRUCTURES, {filter: {structureType: STRUCTURE_EXTENSION}});
-        RCL = creep.room.controller.level;
-
         // console.log(RCL);
 
 

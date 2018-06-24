@@ -34,11 +34,8 @@ module.exports = {
                 return AREA;
 
             case "checkerboard":
-                ODD = true;
                 A = [];
-                // console.log("checkerboard activated");
                 for (y = TOP; y <= BOTTOM; y++) {
-                    // console.log("y is :"+ y);
                     for (x = LEFT; x <= RIGHT; x++) {
                         let tile = AREA[y][x];
                         num = (x + y) % 2;
@@ -48,8 +45,6 @@ module.exports = {
                             tile.y = y;
                             A.push(tile);
                         }
-
-                        // console.log(tile)
                     }
                 }
                 return A;

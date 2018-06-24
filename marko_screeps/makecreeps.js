@@ -30,7 +30,7 @@ module.exports = {
                 actions: roleHarvester
             },
             'builder': {
-                amount: 1,
+                amount: 2,
                 group: 0,
                 groupcap: 4,
                 parts: [WORK, WORK, CARRY, MOVE],
