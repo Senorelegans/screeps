@@ -1,5 +1,6 @@
 var Traveler = require('Traveler');
 var roleHarvester = require('role.harvester');
+var roleRecycle = require('role.recycle');
 var roleUpgrader = require('role.upgrader');
 var roleBuilder = require('role.builder');
 let roleRoadBuilder = require('role.roadbuilder');
@@ -35,22 +36,8 @@ module.exports.loop = function () {
     }
 
 
-
-
-
-
-
-
-
-
-
     spawnroom = Game.spawns[spawner].room;
-
     knownrooms = Game.rooms;
-    // console.log(knownrooms)
-    // console.log(Game.spawns[spawner].room);
-    // console.log(Game.spawns['Spawn1']);
-    // Game.spawns['Spawn1'];
 
     RCL_progress = Game.spawns[spawner].room.controller.progress;
     RCL_progress_total = Game.spawns[spawner].room.controller.progressTotal;
@@ -63,37 +50,12 @@ module.exports.loop = function () {
 
 
 
-
-
-    // for (let object in Area) {
-    //     tiles = JSON.stringify(Area[object]);
-    //     console.log(tiles);
-    // }
-
-
-
-
-
-
-
-    // var terrain = Game.spawns[spawner].room.lookForAtArea('terrain', 0, 0, 49, 49);
-    // console.log(terrain)
-    // terrain[5][10] == 'plain'; // tile at y=5 x=10 is plain land
-    // terrain[25][40] == 'swamp'; // tile at y=25 x=40 is a swamp
-
-
     // console.log("Room lvl: " + RCL);
 
     var extensions = Game.spawns[spawner].room.find(FIND_MY_STRUCTURES, {
         filter: { structureType: STRUCTURE_EXTENSION }
     });
     //console.log(extensions.length);
-    //console.log(extensions);
-
-
-
-
-
 
     // Make list of important sites to network
     let importantsites = [
@@ -103,12 +65,11 @@ module.exports.loop = function () {
         importantsites.push(Game.rooms[room].controller);
     }
 
-
     // Creep census
     let roles = {
         'roadbuilder': {amount:0, parts:[WORK,WORK,CARRY,MOVE], cost:300, actions:roleRoadBuilder},
         'builder': {amount:3, parts:[WORK,WORK,CARRY,MOVE], cost:300, actions:roleBuilder},
-        'upgrader': {amount:20, parts:[WORK,MOVE,CARRY,MOVE], cost:300, actions:roleUpgrader},
+        'upgrader': {amount:4, parts:[WORK,MOVE,CARRY,MOVE], cost:300, actions:roleUpgrader},
         'harvester': {amount:6, parts:[WORK,WORK,CARRY,MOVE], cost:300, actions:roleHarvester},
     };
 //    console.log("miner", support.getCost(roles.miner.parts));
