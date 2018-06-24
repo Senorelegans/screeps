@@ -19,8 +19,18 @@ module.exports = {
             case "emptying":
                 let container = Game.getObjectById(creep.memory.containerid);
                 creep.memory.action = "depositing";
-                if(creep.transfer(container, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-                    creep.moveTo(container, {visualizePathStyle: {stroke: '#ffffff'}});
+                let result = creep.transfer(container, RESOURCE_ENERGY);
+                switch (result) {
+                    case OK:
+                        break;
+                    case ERR_NOT_IN_RANGE:
+                        creep.moveTo(container, {visualizePathStyle: {stroke: '#ffffff'}});
+                        break;
+                    case ERR_FULL:
+                        creep.drop(RESOURCE_ENERGY);
+                        break;
+                    default:
+                        console.log("Unhandled case in Miner:", result);
                 }
                 break;
         }
