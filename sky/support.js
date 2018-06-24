@@ -3,6 +3,13 @@ module.exports = {
     print: function(obj) {
         console.log(JSON.stringify(obj));
     },
+
+    sortBy: function(list, func, property, ascending = true) {
+        let mul = ascending ? 1 : -1;
+        return list.sort(function(a,b) {
+            return (func(a[property]) > func(b[property])) ? 1 * mul : ((func(b[property]) > func(a[property])) ? -1 * mul : 0);
+        });
+    },
     
     getTLBR: function(target, radius) {
         var pos = target.pos;

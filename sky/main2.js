@@ -7,7 +7,7 @@
     IDEAS:
     make Tasks.js to hold things like collectDrops(), harvestSource(src), repairTypes(types)
     expand on tech progress (automate building of extensions and different types of creeps)
-
+    put parts lists into role files?
 */
 
 let support = require('support');
@@ -23,6 +23,7 @@ let roleGrunt = require('role.grunt');
 let roleArcher = require('role.archer');
 let roleMedic = require('role.medic');
 let roleMessenger = require('role.messenger');
+let roleLonghauler = require('role.longhauler');
 
 module.exports.loop = function () {
     const spawnername = "Spawn1";
@@ -42,10 +43,11 @@ module.exports.loop = function () {
     // Creep census
     let roles = {
         'recycle': {amount:0, actions:roleRecycle},
-        'messenger': {amount:1, parts:[MOVE], cost:50, actions:roleMessenger},
-        'medic': {amount:1, parts:[MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,HEAL], cost:550, actions:roleMedic},
-        'archer': {amount:1, parts:[MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,RANGED_ATTACK], cost:550, actions:roleArcher},
-        'grunt': {amount:1, parts:[TOUGH,TOUGH,TOUGH,TOUGH,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,ATTACK,ATTACK], cost:550, actions:roleGrunt},
+        'longhauler': {amount:2, parts:[WORK,WORK,CARRY,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE], cost:550, actions:roleLonghauler},
+        'messenger': {amount:0, parts:[MOVE], cost:50, actions:roleMessenger},
+        'medic': {amount:0, parts:[MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,HEAL], cost:550, actions:roleMedic},
+        'archer': {amount:0, parts:[MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,RANGED_ATTACK], cost:550, actions:roleArcher},
+        'grunt': {amount:0, parts:[TOUGH,TOUGH,TOUGH,TOUGH,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,ATTACK,ATTACK], cost:550, actions:roleGrunt},
         'builder': {amount:0, parts:[WORK,WORK,CARRY,MOVE], cost:300, actions:roleBuilder},
         'supplier': {amount:0, parts:[CARRY,CARRY,MOVE,MOVE], cost:200, actions:roleSupplier},
         'upgrader': {amount:2, parts:[WORK,WORK,WORK,WORK,CARRY,MOVE,MOVE], cost:550, actions:roleUpgrader},
@@ -108,9 +110,10 @@ module.exports.loop = function () {
     //     // }
     // }    
     
+    // Spawn
     for (let role of Object.keys(roles)) {
-        let census =  _.filter(Game.creeps, (creep) => creep.memory.role == role);
-        if (census.length < roles[role].amount) {
+        let census =  _.sum(Game.creeps, (creep) => creep.memory.role == role);
+        if (census < roles[role].amount) {
             let newName = role + Game.time;
             if (role == 'messenger') {
                 newName = "HI LUKE I COME IN PEACE";
@@ -151,14 +154,23 @@ module.exports.loop = function () {
     
     // Run creep roles
     for(let name in Game.creeps) {
+        // Get creep by name
         let creep = Game.creeps[name];
+        // Keep track of action changes
+        let oldaction = undefined;
+        if (creep.memory.action) {
+            oldaction = Object.assign(creep.memory.action);
+        }
         // Can pass extra variables to certain roles
         switch (creep.memory.role) {
-            case 'distributor':
-                roles[creep.memory.role].actions.run(creep, tombstones);
-                break;
             default:
                 roles[creep.memory.role].actions.run(creep);
+        }
+        // If changing actions, announce new action
+        if (creep.memory.action) {
+            if (creep.memory.action != oldaction) {
+                creep.say(creep.memory.action);
+            }
         }
         // Update antcrumbs
         if (creep.memory.lastpos == undefined) {
@@ -174,7 +186,7 @@ module.exports.loop = function () {
     }
     
     // Draw antcrumb values on map, build roads at any tiles exceeding ROADLIMIT
-    const ROADLIMIT = 50;
+    const ROADLIMIT = 99;
     for (tile of Object.keys(Memory.antcrumbs)) {
         const pos = tile.split(",");
         // MYROOM.visual.text(Memory.antcrumbs[tile], Number(pos[0]), Number(pos[1]), {font: "12px"});
@@ -184,12 +196,7 @@ module.exports.loop = function () {
     }
     
     // Do some logic less often than every tick
-    const SLOWUPDATETICKS = 50;
-    if (Memory.slowupdate == undefined) {
-        Memory.slowupdate = SLOWUPDATETICKS;
-    } else if (Memory.slowupdate <= Game.time) {
-        Memory.slowupdate = Game.time + SLOWUPDATETICKS;
-        // Slow update logic
+    if (Game.time % 50 == 0) {
         for (tile of Object.keys(Memory.antcrumbs)) {
             if (Memory.antcrumbs[tile] > 1) {
                 Memory.antcrumbs[tile]--;
@@ -197,8 +204,10 @@ module.exports.loop = function () {
                 Memory.antcrumbs[tile] = undefined;
             }
         }
+    
+        if (!(MYROOM.controller.safeMode)) {
+            MYROOM.controller.activateSafeMode();
+        }
 
-        MYROOM.controller.activateSafeMode();
-        // End slow update logic
     }
 }

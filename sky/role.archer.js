@@ -1,3 +1,4 @@
+let tasks = require('tasks');
 let support = require('support');
 
 module.exports = {
@@ -50,12 +51,16 @@ module.exports = {
         }
 
         // Find closest hostile and kite it
-        let hostiles = creep.room.find(FIND_HOSTILE_CREEPS);
-        if (hostiles.length > 0) {
-            hostiles.sort(function(a,b) {
-                return (creep.pos.getRangeTo(a) > creep.pos.getRangeTo(b)) ? 1 : ((creep.pos.getRangeTo(b) > creep.pos.getRangeTo(a)) ? -1 : 0);
-            });
-            kite(hostiles[0]);
+        // let hostiles = creep.room.find(FIND_HOSTILE_CREEPS);
+        // if (hostiles.length > 0) {
+        //     hostiles.sort(function(a,b) {
+        //         return (creep.pos.getRangeTo(a) > creep.pos.getRangeTo(b)) ? 1 : ((creep.pos.getRangeTo(b) > creep.pos.getRangeTo(a)) ? -1 : 0);
+        //     });
+        //     kite(hostiles[0]);
+        // }
+        let hostile = creep.pos.findClosestByRange(FIND_HOSTILE_CREEPS);
+        if (hostile) {
+            kite(hostile);
         }
     }
 };

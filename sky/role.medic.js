@@ -1,3 +1,5 @@
+let tasks = require('tasks');
+
 module.exports = {
     run: function(creep) {
 
@@ -10,6 +12,7 @@ module.exports = {
         }
         
         // Move toward the most damaged friendly while healing the most damaged friendlies along the way
+        // TODO incorporate ranged_heal()
         let triage = function(targets) {
             let healtarget = targets[0];
             let movetarget = targets[0];

@@ -1,3 +1,5 @@
+let tasks = require('tasks');
+
 module.exports = {
     run: function(creep) {
         // toggle empty/full status

@@ -1,3 +1,5 @@
+let tasks = require('tasks');
+
 module.exports = {
     run: function(creep) {
         const home = new RoomPosition(36, 22, "E24N53"); // Home base

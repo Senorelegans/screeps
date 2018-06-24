@@ -1,5 +1,7 @@
+let tasks = require('tasks');
+
 module.exports = {
-    run: function(creep, tombstones) {
+    run: function(creep) {
         
         if (creep.carry.energy == creep.carryCapacity) {
             creep.memory.mode = "emptying";
@@ -9,23 +11,14 @@ module.exports = {
         
         switch (creep.memory.mode) {
             case "filling":
-                const gil = creep.pos.findClosestByRange(FIND_DROPPED_RESOURCES);
-                if (gil) {
-                    if (creep.pickup(gil) == ERR_NOT_IN_RANGE) {
-                        creep.moveTo(gil);
-                        return;
-                    }
+                if (tasks.pickupNearestEnergy(creep)) {
+                    creep.memory.action = "picking up gil";
+                } else if (tasks.withdrawNearestEnergy(creep)) {
+                    creep.memory.action = "withdrawing";
+                } else if (tasks.mineNearestSource(creep)) {
+                    creep.memory.action = "mining";
                 } else {
-                    for (let c of creep.memory.containerids) {
-                        let container = Game.getObjectById(c);
-                        if (c.energy > 0) {
-                            creep.memory.action = "withdrawing";
-                            if (creep.withdraw(container, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-                                creep.moveTo(container);
-                            }
-                            break;
-                        }
-                    }
+                    creep.memory.action = "stalling";
                 }
                 break;
                 
