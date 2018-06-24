@@ -4,8 +4,13 @@ module.exports = {
     run: function(creep) {
         // creep.say("pew pew");
 
-        creep.moveTo(42, 22);
-        // return;
+        // Rally to most recent flag
+        const flags = creep.room.find(FIND_FLAGS);
+        if (flags.length > 0) {
+            // flags[flags.length-1].color == 1
+            // flags[flags.length-1].secondarycolor == 1
+            creep.moveTo(flags[flags.length-1]);
+        }
         
         // console.log(JSON.stringify(creep.room.lookForAt(LOOK_STRUCTURES, 35, 20)));
 

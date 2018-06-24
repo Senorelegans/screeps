@@ -2,7 +2,13 @@ module.exports = {
     run: function(creep) {
         // creep.say("healy");
 
-        creep.moveTo(38, 21);
+        // Rally to most recent flag
+        const flags = creep.room.find(FIND_FLAGS);
+        if (flags.length > 0) {
+            // flags[flags.length-1].color == 1
+            // flags[flags.length-1].secondarycolor == 1
+            creep.moveTo(flags[flags.length-1]);
+        }
         
         let triage = function(targets) {
             let healtarget = targets[0];

@@ -3,6 +3,13 @@
 // Game.creeps['a'].move(TOP);
 // https://github.com/bonzaiferroni/bonzAI/wiki/Traveler-API
 
+/*
+    IDEAS:
+    make Tasks.js to hold things like collectDrops(), harvestSource(src), repairTypes(types)
+    expand on tech progress (automate building of extensions and different types of creeps)
+
+*/
+
 let support = require('support');
 let roleHarvester = require('role.harvester');
 let roleMiner = require('role.miner');
@@ -15,6 +22,7 @@ let roleRecycle = require('role.recycle');
 let roleGrunt = require('role.grunt');
 let roleArcher = require('role.archer');
 let roleMedic = require('role.medic');
+let roleMessenger = require('role.messenger');
 
 module.exports.loop = function () {
     const spawnername = "Spawn1";
@@ -34,6 +42,7 @@ module.exports.loop = function () {
     // Creep census
     let roles = {
         'recycle': {amount:0, actions:roleRecycle},
+        'messenger': {amount:1, parts:[MOVE], cost:50, actions:roleMessenger},
         'medic': {amount:1, parts:[MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,HEAL], cost:550, actions:roleMedic},
         'archer': {amount:1, parts:[MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,RANGED_ATTACK], cost:550, actions:roleArcher},
         'grunt': {amount:1, parts:[TOUGH,TOUGH,TOUGH,TOUGH,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,ATTACK,ATTACK], cost:550, actions:roleGrunt},
@@ -45,38 +54,59 @@ module.exports.loop = function () {
         'miner': {amount:0, parts:[WORK,WORK,WORK,WORK,CARRY,MOVE], cost:500, actions:roleMiner},
         'harvester': {amount:0, parts:[WORK,WORK,CARRY,MOVE], cost:300, actions:roleHarvester},
     };
-//    console.log("cost:", support.getCost(roles.grunt.parts));
+    // console.log("cost:", support.getCost(roles.grunt.parts));
+
+    // Run towers
+    let towers = MYROOM.find(FIND_MY_STRUCTURES).filter(structure => structure.structureType == "tower");
+    if (towers.length > 0) {
+        for (let tower of towers) {
+            let closestDamagedStructure = tower.pos.findClosestByRange(FIND_STRUCTURES, {
+                filter: (structure) => structure.hits < structure.hitsMax
+            });
+            if(closestDamagedStructure) {
+                tower.repair(closestDamagedStructure);
+            }
     
-    let tiles = support.getTilesInArea(MYSPAWNER, 2, true);
-    for (let tile of tiles) {
-        if (tile.structure == undefined) {
-            // console.log(tile.x, tile.y);
+            let closestHostile = tower.pos.findClosestByRange(FIND_HOSTILE_CREEPS);
+            if(closestHostile) {
+                tower.attack(closestHostile);
+            }
         }
     }
     
-    if (MYROOM.energyCapacityAvailable < 550) {
-        let extensionsNeeded = 5 - extensions.length;
-        for (let construction of myconstructions) {
-            if (construction.structureType == STRUCTURE_EXTENSION) {
-                extensionsNeeded--;
-            }
-        }
-        // const parity = (MYSPAWNER.pos.x + MYSPAWNER.pos.y) % 2;
-        // while (extensionsNeeded > 0) {
-        //     let tiles = support.getTilesInArea(MYSPAWNER, 2, true);
-        //     for (let tile of tiles) {
-        //         if (tile.structure == undefined && (tile.x + tile.y) % 2 == parity) {
-        //             MYROOM.createConstructionSite(tile.x, tile.y, STRUCTURE_EXTENSION);
-        //             extensionsNeeded--;
-        //         }
-        //     }
-        // }
-    }    
+    // let tiles = support.getTilesInArea(MYSPAWNER, 2, true);
+    // for (let tile of tiles) {
+    //     if (tile.structure == undefined) {
+    //         // console.log(tile.x, tile.y);
+    //     }
+    // }
+    
+    // if (MYROOM.energyCapacityAvailable < 550) {
+    //     let extensionsNeeded = 5 - extensions.length;
+    //     for (let construction of myconstructions) {
+    //         if (construction.structureType == STRUCTURE_EXTENSION) {
+    //             extensionsNeeded--;
+    //         }
+    //     }
+    //     // const parity = (MYSPAWNER.pos.x + MYSPAWNER.pos.y) % 2;
+    //     // while (extensionsNeeded > 0) {
+    //     //     let tiles = support.getTilesInArea(MYSPAWNER, 2, true);
+    //     //     for (let tile of tiles) {
+    //     //         if (tile.structure == undefined && (tile.x + tile.y) % 2 == parity) {
+    //     //             MYROOM.createConstructionSite(tile.x, tile.y, STRUCTURE_EXTENSION);
+    //     //             extensionsNeeded--;
+    //     //         }
+    //     //     }
+    //     // }
+    // }    
     
     for (let role of Object.keys(roles)) {
-        var census =  _.filter(Game.creeps, (creep) => creep.memory.role == role);
-        if(census.length < roles[role].amount) {
-            var newName = role + Game.time;
+        let census =  _.filter(Game.creeps, (creep) => creep.memory.role == role);
+        if (census.length < roles[role].amount) {
+            let newName = role + Game.time;
+            if (role == 'messenger') {
+                newName = "HI LUKE I COME IN PEACE";
+            }
             let memory = {role: role};
             switch (role) {
                 case 'hyperminer':
@@ -87,11 +117,12 @@ module.exports.loop = function () {
                     break;
                 case 'supplier':
                 case 'builder':
+                case 'upgrader':
                 case 'distributor':
                     memory.containerids = [containers[0].id, containers[1].id];
                     break;
             }
-//            console.log("Spawning", role);
+        //    console.log("Spawning", role);
             MYSPAWNER.spawnCreep(roles[role].parts, newName, {memory: memory})
         }
     }

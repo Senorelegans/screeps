@@ -34,27 +34,20 @@ module.exports = {
                 
                 let target = undefined;
                 
-                // Check spawn
-                const spawn = Game.spawns['Spawn1']
-                if (spawn.energy < spawn.energyCapacity) {
-                    target = spawn;
-                    if(creep.transfer(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-                        creep.moveTo(target, {visualizePathStyle: {stroke: '#ffffff'}});
+                // Check structures
+                let targets = creep.room.find(FIND_STRUCTURES, {
+                    filter: (structure) => {
+                        return (structure.structureType == STRUCTURE_EXTENSION ||
+                                structure.structureType == STRUCTURE_SPAWN ||
+                                structure.structureType == STRUCTURE_TOWER) && structure.energy < structure.energyCapacity;
+                    }
+                });
+                if (targets.length > 0) {
+                    target = targets[0];
+                    if (creep.transfer(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+                        creep.moveTo(target);
                     }
                     return;
-                }
-                
-                // Check extensions
-                for (let structure of creep.room.find(FIND_MY_STRUCTURES)) {
-                    if (structure.structureType == STRUCTURE_EXTENSION) {
-                        if (structure.energy < structure.energyCapacity) {
-                            target = structure;
-                            if(creep.transfer(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-                                creep.moveTo(target, {visualizePathStyle: {stroke: '#ffffff'}});
-                            }
-                            return;
-                        }
-                    }
                 }
         }
 //        creep.say(creep.memory.action);
