@@ -11,8 +11,11 @@ module.exports.loop = function () {
     support.erasedead();
 
     const spawner = "Spawn1";
-    
 
+    // Get tiles around a tile
+
+
+    thing = Game.spawns[spawner]; // can be spawner, creep, resource
     var tile = thing.pos;
     add_area = 1; // amount around your tile you will add.
     console.log(tile);
@@ -77,7 +80,6 @@ module.exports.loop = function () {
 
 
 
-    thing = Game.spawns[spawner]
 
 
     // for (let object in Area) {
