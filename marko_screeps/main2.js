@@ -46,6 +46,8 @@ module.exports.loop = function () {
     makecreeps.creeps2(MYSPAWNER,sources);
     support.SpawnerInfo(MYSPAWNER);
 
+
+
     if (extensions < 5) {
         AREA = support.getTilesInArea(MYSPAWNER, 2, 'checkerboard', false, -3,-2);
         for (tile in AREA) {

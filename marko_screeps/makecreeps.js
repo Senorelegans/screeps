@@ -10,6 +10,8 @@ let roleUpgrader = require('role.upgrader');
 module.exports = {
 
     creeps2: function(MYSPAWNER, sources) {
+        const extensions = MYSPAWNER.room.find(FIND_MY_STRUCTURES, {filter: { structureType: STRUCTURE_EXTENSION }});
+
         //Creep census
         let roles = {
             'recycle': {amount: 0, actions: roleRecycle},
@@ -30,9 +32,9 @@ module.exports = {
                 actions: roleHarvester
             },
             'builder': {
-                amount: 2,
+                amount: 3,
                 group: 0,
-                groupcap: 4,
+                groupcap: 10,
                 parts: [WORK, WORK, CARRY, MOVE],
                 cost: 300,
                 actions: roleBuilder
@@ -41,20 +43,26 @@ module.exports = {
 
         for (let role of Object.keys(roles)) {
             let census = _.filter(Game.creeps, (creep) => creep.memory.role == role);
+
+            if (roles[role] == "builder" && extensions > 5) {
+                roles[role].amount = 0; // stop making builders if over 5 extensions
+            }
+
+
+
             if (census.length < roles[role].amount) {
                 let newName = role + Game.time;
                 let memory = {role: role};
-
                 memory.group = Math.floor(census.length / roles[role].groupcap);
                 switch (role) {
                     case 'harvester':
                         memory.sourceid = sources[memory.group].id;
                         break;
-                    case 'upgrader':
                 }
                 MYSPAWNER.spawnCreep(roles[role].parts, newName, {memory: memory});
             }
         }
+
 
         // Run creep roles
         for (let name in Game.creeps) {
