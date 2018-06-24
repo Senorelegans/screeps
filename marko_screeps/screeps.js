@@ -45,3 +45,6 @@ var extensions = Game.spawns[spawner].room(FIND_MY_STRUCTURES, {
     filter: { structureType: STRUCTURE_EXTENSION }
 });
 console.log(extensions.length);
+
+
+var temp = spawn.room.lookForAtArea(LOOK_TERRAIN,resource.pos.y+2,resource.pos.x-2,resource.pos.y-2,resource.pos.x+2,true);

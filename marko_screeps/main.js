@@ -17,14 +17,77 @@ module.exports.loop = function () {
 
     knownrooms = Game.rooms;
     // console.log(knownrooms)
-    console.log(Game.spawns[spawner].room);
+    // console.log(Game.spawns[spawner].room);
     // console.log(Game.spawns['Spawn1']);
     // Game.spawns['Spawn1'];
 
     RCL_progress = Game.spawns[spawner].room.controller.progress;
     RCL_progress_total = Game.spawns[spawner].room.controller.progressTotal;
     RCL = (Game.spawns[spawner].room.controller.level);
-    console.log("Room lvl: " + RCL);
+
+
+    let resources_list = Game.spawns[spawner].room.find(FIND_SOURCES);
+
+    resource1 = resources_list[0];
+
+
+    
+    thing = Game.spawns[spawner]
+
+
+    var tile = thing.pos;
+    add_area = 1; // amount around your tile you will add.
+    console.log(tile);
+    let TOP = tile.y+add_area;
+    let LEFT = tile.x+add_area;
+    let BOTTOM = tile.y-add_area;
+    let RIGHT = tile.x-add_area;
+    let W = LEFT - RIGHT; // width
+    let H = TOP - BOTTOM; // heigth
+    let AREA = thing.room.lookAtArea(TOP,LEFT,BOTTOM,RIGHT); // 37 and 11
+    let AREA = thing.room.lookAtArea(TOP,LEFT,BOTTOM,RIGHT); // 37 and 11
+
+    console.log(JSON.stringify(AREA[TOP]));
+    console.log(AREA[37]);
+    console.log(JSON.stringify(AREA[TOP]));
+
+    const look = thing.room.lookAtArea(10,5,11,7);
+    // console.log(look);
+    // console.log(look[10]);
+
+    // // console.log(JSON.stringify(look[10]));
+    // console.log(JSON.stringify(look[37][6]) );
+
+    // console.log(AREA[37][j])
+    //
+    // //
+    // for (i = BOTTOM; i <= BOTTOM+H; i++) {
+    //         console.log("i is :"+ i);
+    //         for (j = LEFT; j <= LEFT+W; j++){
+    //             console.log("j is :"+ j);
+    //             console.log(AREA[TOP][BOTTOM]);
+    //
+    //         }
+    // }
+
+    // for (let object in Area) {
+    //     tiles = JSON.stringify(Area[object]);
+    //     console.log(tiles);
+    // }
+
+
+
+
+
+
+
+    // var terrain = Game.spawns[spawner].room.lookForAtArea('terrain', 0, 0, 49, 49);
+    // console.log(terrain)
+    // terrain[5][10] == 'plain'; // tile at y=5 x=10 is plain land
+    // terrain[25][40] == 'swamp'; // tile at y=25 x=40 is a swamp
+
+
+    // console.log("Room lvl: " + RCL);
 
     var extensions = Game.spawns[spawner].room.find(FIND_MY_STRUCTURES, {
         filter: { structureType: STRUCTURE_EXTENSION }
@@ -50,7 +113,7 @@ module.exports.loop = function () {
     let roles = {
         'roadbuilder': {amount:0, parts:[WORK,WORK,CARRY,MOVE], cost:300, actions:roleRoadBuilder},
         'builder': {amount:3, parts:[WORK,WORK,CARRY,MOVE], cost:300, actions:roleBuilder},
-        'upgrader': {amount:6, parts:[WORK,MOVE,CARRY,MOVE], cost:300, actions:roleUpgrader},
+        'upgrader': {amount:20, parts:[WORK,MOVE,CARRY,MOVE], cost:300, actions:roleUpgrader},
         'harvester': {amount:6, parts:[WORK,WORK,CARRY,MOVE], cost:300, actions:roleHarvester},
     };
 //    console.log("miner", support.getCost(roles.miner.parts));
