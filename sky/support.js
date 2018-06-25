@@ -1,14 +1,58 @@
 module.exports = {
-    // Print JSON objects
-    print: function(obj) {
-        console.log(JSON.stringify(obj));
+    // Print JSON objects nicely
+    print: function(obj, pretty = true) {
+        if (pretty) {
+            console.log(JSON.stringify(obj, null, 1));
+        } else {
+            console.log(JSON.stringify(obj));
+        }
     },
 
+    // Sorts a list by applying a function to a property of each object
+    // Ex. support.sortBy(mylist, creep.pos.getRangeTo.bind(creep.pos), "pos")
     sortBy: function(list, func, property, ascending = true) {
         let mul = ascending ? 1 : -1;
         return list.sort(function(a,b) {
             return (func(a[property]) > func(b[property])) ? 1 * mul : ((func(b[property]) > func(a[property])) ? -1 * mul : 0);
         });
+    },
+
+    // Converts a position from other types into an object
+    posToObj: function(pos) {
+        switch (typeof pos) {
+            case "string":
+                pos = pos.split(",");
+            case "array":
+                return {x:pos[0], y:pos[1]}
+            case "object":
+                return pos;
+        }
+    },
+
+    setRoomMemory: function (room, pos, key, value) {
+        pos = module.exports.posToObj(pos);
+        if (room.memory[[pos.x, pos.y]] == undefined) {
+            room.memory[[pos.x, pos.y]] = {};
+        }
+        room.memory[[pos.x, pos.y]][key] = value;
+    },
+
+    getRoomMemory: function (room, pos, key) {
+        pos = module.exports.posToObj(pos);
+        if (room.memory[[pos.x, pos.y]] == undefined) {
+            return undefined;
+        } else {
+            return room.memory[[pos.x, pos.y]][key];
+        }
+    },
+
+    clearRoomMemory: function (room, pos, key) {
+        pos = module.exports.posToObj(pos);
+        if (key) {
+            module.exports.setRoomMemory(room, pos, key, undefined);
+        } else {
+            room.memory[[pos.x, pos.y]] = undefined;
+        }
     },
     
     getTLBR: function(target, radius) {

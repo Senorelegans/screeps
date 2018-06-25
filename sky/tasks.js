@@ -58,7 +58,7 @@ module.exports = {
     buildStructures: function(creep) {
         let target = creep.pos.findClosestByPath(FIND_CONSTRUCTION_SITES);
         if (target) {
-            if(creep.repair(target) == ERR_NOT_IN_RANGE) {
+            if(creep.build(target) == ERR_NOT_IN_RANGE) {
                 creep.moveTo(target);
             }
             return true;
@@ -94,14 +94,10 @@ module.exports = {
     // Returns true if picking up
     // Returns false if no containers with energy found
     withdrawNearestEnergy: function(creep) {
-        // let containers = creep.room.find(FIND_STRUCTURES).filter(structure => structure.structureType == STRUCTURE_CONTAINER && structure.store.energy > 0);
         let container = creep.pos.findClosestByRange(FIND_STRUCTURES, {filter: function(structure) {
             return structure.structureType == STRUCTURE_CONTAINER && structure.store.energy > 0
         }});
         if (container) {
-            // Get closest one
-            // containers = support.sortBy(containers, creep.pos.getRangeTo.bind(creep.pos), "pos");
-            // const container = containers[0];
             if (creep.withdraw(container, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
                 creep.moveTo(container);
             }
@@ -117,7 +113,7 @@ module.exports = {
     mineNearestSource: function(creep) {
         let source = creep.pos.findClosestByPath(FIND_SOURCES_ACTIVE);
         if (source) {
-            return exports.mineSource(creep, source);
+            return module.exports.mineSource(creep, source);
         } else {
             return false;
         }

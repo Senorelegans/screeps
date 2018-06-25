@@ -29,6 +29,12 @@ module.exports.loop = function () {
     const MYSPAWNER = Game.spawns[spawnername];
     const MYROOM = MYSPAWNER.room;
 
+    // Initialize room memory
+    if (MYROOM.memory == undefined) {
+        MYROOM.memory = {};
+    }
+
+    // Erase memory of dead screeps
     support.erasedead();
     
     // Get lists
@@ -114,23 +120,10 @@ module.exports.loop = function () {
         let census =  _.sum(Game.creeps, (creep) => creep.memory.role == role);
         if (census < roles[role].amount) {
             let newName = role + Game.time;
-            if (role == 'messenger') {
-                newName = "HI LUKE I COME IN PEACE";
-            }
             let memory = {role: role};
             switch (role) {
                 case 'hyperminer':
-                case 'harvester':
                     memory.sourceid = sources[0].id;
-                case 'miner':
-                    memory.containerid = containers[0].id;
-                    break;
-                case 'supplier':
-                case 'builder':
-                case 'upgrader':
-                case 'distributor':
-                    memory.containerids = [containers[0].id, containers[1].id];
-                    break;
             }
         //    console.log("Spawning", role);
             MYSPAWNER.spawnCreep(roles[role].parts, newName, {memory: memory})
@@ -145,10 +138,6 @@ module.exports.loop = function () {
             MYSPAWNER.pos.x + 0, 
             MYSPAWNER.pos.y + 1, 
             {align: 'center', opacity: 0.2});
-    }
-    
-    if (Memory.antcrumbs == undefined) {
-        Memory.antcrumbs = {};
     }
     
     // Run creep roles
@@ -171,39 +160,43 @@ module.exports.loop = function () {
                 creep.say(creep.memory.action);
             }
         }
-        // Update antcrumbs
-        if (creep.memory.lastpos == undefined) {
-            creep.memory.lastpos = {x:creep.pos.x, y:creep.pos.y};
-        } else if (creep.memory.lastpos.x != creep.pos.x || creep.memory.lastpos.y != creep.pos.y) {
-            creep.memory.lastpos = {x:creep.pos.x, y:creep.pos.y};
-            if (Memory.antcrumbs[[creep.pos.x, creep.pos.y]] == undefined) {
-                Memory.antcrumbs[[creep.pos.x, creep.pos.y]] = 1;
-            } else if (Memory.antcrumbs[[creep.pos.x, creep.pos.y]] < 99) {
-                Memory.antcrumbs[[creep.pos.x, creep.pos.y]] += 1;
+        // Update antcrumbs in this room
+        if (creep.room == MYROOM) {
+            if (creep.memory.lastpos == undefined) {
+                creep.memory.lastpos = {x:creep.pos.x, y:creep.pos.y};
+            } else if (creep.memory.lastpos.x != creep.pos.x || creep.memory.lastpos.y != creep.pos.y) {
+                creep.memory.lastpos = {x:creep.pos.x, y:creep.pos.y};
+                let count = support.getRoomMemory(creep.room, creep.pos, 'antcrumbs');
+                count = count ? count : 0;
+                support.setRoomMemory(creep.room, creep.pos, 'antcrumbs', count + 1);
             }
         }
     }
-    
+
     // Draw antcrumb values on map, build roads at any tiles exceeding ROADLIMIT
     const ROADLIMIT = 99;
-    for (tile of Object.keys(Memory.antcrumbs)) {
+    for (tile of Object.keys(MYROOM.memory)) {
         const pos = tile.split(",");
-        // MYROOM.visual.text(Memory.antcrumbs[tile], Number(pos[0]), Number(pos[1]), {font: "12px"});
-        if (Memory.antcrumbs[tile] > ROADLIMIT) {
+        if (MYROOM.memory[tile].antcrumbs) {
+            MYROOM.visual.text(MYROOM.memory[tile].antcrumbs, Number(pos[0]), Number(pos[1]), {font: "12px"});
+        }
+        if (MYROOM.memory[tile].antcrumbs > ROADLIMIT) {
             MYROOM.createConstructionSite(Number(pos[0]), Number(pos[1]), STRUCTURE_ROAD);
         }
     }
     
     // Do some logic less often than every tick
     if (Game.time % 50 == 0) {
-        for (tile of Object.keys(Memory.antcrumbs)) {
-            if (Memory.antcrumbs[tile] > 1) {
-                Memory.antcrumbs[tile]--;
+        for (tile of Object.keys(MYROOM.memory)) {
+            const value = support.getRoomMemory(MYROOM, tile, "antcrumbs");
+            if (value > 1) {
+                support.setRoomMemory(MYROOM, tile, "antcrumbs", value - 1);
             } else {
-                Memory.antcrumbs[tile] = undefined;
+                support.clearRoomMemory(MYROOM, tile, "antcrumbs");
             }
         }
     
+        // Always be safe.
         if (!(MYROOM.controller.safeMode)) {
             MYROOM.controller.activateSafeMode();
         }
