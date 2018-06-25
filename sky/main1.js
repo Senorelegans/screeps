@@ -1,11 +1,5 @@
-// Game.spawns['Spawn1'].room.controller.activateSafeMode();
-// Game.spawns['Spawn1'].spawnCreep( [WORK,WORK,CARRY,MOVE],'a',{ memory: { role: 'harvester' } } );
-// Game.creeps['a'].move(TOP);
-// https://github.com/bonzaiferroni/bonzAI/wiki/Traveler-API
-
 let support = require('support');
-let roleJack = require('role.jack');
-let roleRecycle = require('role.recycle');
+let roles = require('roles');
 
 module.exports.loop = function () {
     // Names for units
@@ -15,25 +9,22 @@ module.exports.loop = function () {
 
     support.erasedead();
     
-    // Get lists
-    const sources = MYSPAWNER.room.find(FIND_SOURCES);
-    
-    // Creep census
-    let roles = {
-        'recycle': {amount:0, actions:roleRecycle},
-        'harvester': {amount:3, parts:[WORK,WORK,CARRY,MOVE], cost:300, actions:roleJack},
-    };
+    // Set quotas
+    roles.jack1.quota = 3;
+    roles.miner1.quota = 0;
+    roles.supplier1.quota = 0;
+    roles.builder1.quota = 0;
+    roles.upgrader1.quota = 0;
 
     // Spawn
     for (let role of Object.keys(roles)) {
         var census =  _.filter(Game.creeps, (creep) => creep.memory.role == role);
-        if(census.length < roles[role].amount) {
+        if(census.length < roles[role].quota) {
             var newName = role + Game.time;
             let memory = {role: role};
             // Pass extra memory flags to certain roles
             switch (role) {
-                case 'harvester':
-                    break;
+                default:
             }
             MYSPAWNER.spawnCreep(roles[role].parts, newName, {memory: memory})
         }

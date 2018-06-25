@@ -23,6 +23,8 @@ module.exports.loop = function () {
         MYROOM.memory = {};
     }
 
+    // support.print(MYROOM.lookForAt(LOOK_STRUCTURES,41,19))
+
     // Erase memory of dead screeps
     support.erasedead();
     
@@ -61,41 +63,34 @@ module.exports.loop = function () {
             }
         }
     }
-    
-    // let tiles = support.getTilesInArea(MYSPAWNER, 2, true);
-    // for (let tile of tiles) {
-    //     if (tile.structure == undefined) {
-    //         // console.log(tile.x, tile.y);
-    //     }
-    // }
-    
-    // if (MYROOM.energyCapacityAvailable < 550) {
-    //     let extensionsNeeded = 5 - extensions.length;
-    //     for (let construction of myconstructions) {
-    //         if (construction.structureType == STRUCTURE_EXTENSION) {
-    //             extensionsNeeded--;
-    //         }
-    //     }
-    //     // const parity = (MYSPAWNER.pos.x + MYSPAWNER.pos.y) % 2;
-    //     // while (extensionsNeeded > 0) {
-    //     //     let tiles = support.getTilesInArea(MYSPAWNER, 2, true);
-    //     //     for (let tile of tiles) {
-    //     //         if (tile.structure == undefined && (tile.x + tile.y) % 2 == parity) {
-    //     //             MYROOM.createConstructionSite(tile.x, tile.y, STRUCTURE_EXTENSION);
-    //     //             extensionsNeeded--;
-    //     //         }
-    //     //     }
-    //     // }
-    // }    
+
+    // Set quotas
+    // Tier 3
+    roles.jack3.quota = 2;
+    roles.miner3.quota = 0;
+    roles.upgrader3.quota = 2;
+    roles.supplier3.quota = 0;
+    roles.builder3.quota = 0;
+    roles.longhauler3.quota = 2;
+    // Tier 2;
+    roles.grunt2.quota = 0;
+    roles.archer2.quota = 0;
+    roles.medic2.quota = 0;
+    roles.hyperminer2.quota = 1;
+    roles.longhauler2.quota = 0;
+    roles.jack2.quota = 0;
+    roles.upgrader2.quota = 0;
+    roles.supplier2.quota = 0;
+    roles.builder2.quota = 0;
     
     // Spawn
     for (let role of Object.keys(roles)) {
         let census =  _.sum(Game.creeps, (creep) => creep.memory.role == role);
-        if (census < roles[role].amount) {
+        if (census < roles[role].quota) {
             let newName = role + Game.time;
             let memory = {role: role};
             switch (role) {
-                case 'hyperminer':
+                case 'hyperminer2':
                     memory.sourceid = sources[0].id;
             }
         //    console.log("Spawning", role);
@@ -141,7 +136,9 @@ module.exports.loop = function () {
                 creep.memory.lastpos = {x:creep.pos.x, y:creep.pos.y};
                 let count = support.getRoomMemory(creep.room, creep.pos, 'antcrumbs');
                 count = count ? count : 0;
-                support.setRoomMemory(creep.room, creep.pos, 'antcrumbs', count + 1);
+                if (count < 99) {
+                    support.setRoomMemory(creep.room, creep.pos, 'antcrumbs', count + 1);
+                }
             }
         }
     }
@@ -151,9 +148,9 @@ module.exports.loop = function () {
     for (tile of Object.keys(MYROOM.memory)) {
         const pos = tile.split(",");
         if (MYROOM.memory[tile].antcrumbs) {
-            MYROOM.visual.text(MYROOM.memory[tile].antcrumbs, Number(pos[0]), Number(pos[1]), {font: "12px"});
+            // MYROOM.visual.text(MYROOM.memory[tile].antcrumbs, Number(pos[0]), Number(pos[1]), {font: "12px"});
         }
-        if (MYROOM.memory[tile].antcrumbs > ROADLIMIT) {
+        if (MYROOM.memory[tile].antcrumbs >= ROADLIMIT) {
             MYROOM.createConstructionSite(Number(pos[0]), Number(pos[1]), STRUCTURE_ROAD);
         }
     }
@@ -170,9 +167,9 @@ module.exports.loop = function () {
         }
     
         // Always be safe.
-        if (!(MYROOM.controller.safeMode)) {
-            MYROOM.controller.activateSafeMode();
-        }
+        // if (!(MYROOM.controller.safeMode)) {
+        //     MYROOM.controller.activateSafeMode();
+        // }
 
     }
 }

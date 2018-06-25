@@ -64,7 +64,7 @@ module.exports = {
         return [TOP, LEFT, BOTTOM, RIGHT];
     },
     
-    getTilesInArea: function(target, radius, asArray) {
+    getTerrainInArea: function(target, radius, asArray) {
         var pos = target.pos;
         let TOP = pos.y - radius;
         let LEFT = pos.x - radius;
@@ -72,7 +72,7 @@ module.exports = {
         let RIGHT = pos.x + radius;
         let W = RIGHT - LEFT;
         let H =  BOTTOM - TOP;
-        let AREA = target.room.lookAtArea(TOP, LEFT, BOTTOM, RIGHT, asArray);
+        let AREA = target.room.lookForAtArea(LOOK_TERRAIN, TOP, LEFT, BOTTOM, RIGHT, asArray);
         return AREA;
     },
 

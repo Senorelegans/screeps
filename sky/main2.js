@@ -11,18 +11,7 @@
 */
 
 let support = require('support');
-let roleMiner = require('role.miner');
-let roleHyperMiner = require('role.hyperminer');
-let roleUpgrader = require('role.upgrader');
-let roleBuilder = require('role.builder');
-let roleSupplier = require('role.supplier');
-let roleRecycle = require('role.recycle');
-let roleGrunt = require('role.grunt');
-let roleArcher = require('role.archer');
-let roleMedic = require('role.medic');
-let roleMessenger = require('role.messenger');
-let roleLonghauler = require('role.longhauler');
-let roleJack = require('role.jack');
+let roles = require('roles');
 
 module.exports.loop = function () {
     const spawnername = "Spawn1";
@@ -44,59 +33,58 @@ module.exports.loop = function () {
     const extensions = MYROOM.find(FIND_MY_STRUCTURES, {filter: { structureType: STRUCTURE_EXTENSION }});
     const containers = MYROOM.find(FIND_STRUCTURES, {filter: { structureType: STRUCTURE_CONTAINER }});
     const tombstones = MYROOM.find(FIND_TOMBSTONES);
-    
-    // Creep census
-    let roles = {
-        'recycle': {amount:0, actions:roleRecycle},
-        'longhauler': {amount:2, parts:[WORK,WORK,CARRY,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE], cost:550, actions:roleLonghauler},
-        'messenger': {amount:0, parts:[MOVE], cost:50, actions:roleMessenger},
-        'medic': {amount:0, parts:[MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,HEAL], cost:550, actions:roleMedic},
-        'archer': {amount:0, parts:[MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,RANGED_ATTACK], cost:550, actions:roleArcher},
-        'grunt': {amount:0, parts:[TOUGH,TOUGH,TOUGH,TOUGH,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,ATTACK,ATTACK], cost:550, actions:roleGrunt},
-        'builder': {amount:0, parts:[WORK,WORK,CARRY,MOVE], cost:300, actions:roleBuilder},
-        'supplier': {amount:0, parts:[CARRY,CARRY,MOVE,MOVE], cost:200, actions:roleSupplier},
-        'upgrader': {amount:2, parts:[WORK,WORK,WORK,WORK,CARRY,MOVE,MOVE], cost:550, actions:roleUpgrader},
-        'hyperminer': {amount:1, parts:[WORK,WORK,WORK,WORK,WORK,MOVE], cost:550, actions:roleHyperMiner},
-        'distributor': {amount:2, parts:[WORK,WORK,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE], cost:500, actions:roleJack},
-        'miner': {amount:0, parts:[WORK,WORK,WORK,WORK,CARRY,MOVE], cost:500, actions:roleMiner},
-        'harvester': {amount:0, parts:[WORK,WORK,CARRY,MOVE], cost:300, actions:roleJack},
-    };
+
     // console.log("cost:", support.getCost(roles.grunt.parts));
+
+    if (MYROOM.energyCapacityAvailable < 550) {
+
+        // Include looking for flag for alternate extension farm area
+
+        // Set quotas
+        // Tier 1
+        roles.jack1.quota = 1;
+        roles.builder1.quota = 2;
+        roles.upgrader1.quota = 1;
+        let extensionsNeeded = 5 - extensions.length;
+        let extensionsBuilding = MYROOM.find(FIND_MY_CONSTRUCTION_SITES, {filter: { structureType: STRUCTURE_EXTENSION }}).length;
+        let searchOffset = Math.ceil(Math.sqrt((extensionsNeeded - extensionsBuilding) - 1));
+        const parity = (MYSPAWNER.pos.x + MYSPAWNER.pos.y) % 2;
+        const maxloops = 20;
+        let loops = 0;
+        while (extensionsBuilding < extensionsNeeded && loops < maxloops) {
+            let tiles = support.getTerrainInArea(MYSPAWNER, searchOffset, true);
+            for (let tile of tiles) {
+                if ((tile.x + tile.y) % 2 == parity) {
+                    if (tile.terrain != "wall") {
+                        if (MYROOM.lookForAt(LOOK_STRUCTURES, tile.x, tile.y).length == 0 && MYROOM.lookForAt(LOOK_CONSTRUCTION_SITES, tile.x, tile.y).length == 0) {
+                            if (extensionsBuilding < extensionsNeeded) {
+                                MYROOM.createConstructionSite(tile.x, tile.y, STRUCTURE_EXTENSION);
+                                extensionsBuilding++;
+                            }
+                        }
+                    }
+                }
+            }
+            searchOffset++;
+            loops++;
+        }
+    } else {
+        // Set quotas
+        // Tier 2;
+        roles.hyperminer2.quota = 1;
+        roles.jack2.quota = 2;
+        roles.upgrader2.quota = 2;
+    }    
     
-    // let tiles = support.getTilesInArea(MYSPAWNER, 2, true);
-    // for (let tile of tiles) {
-    //     if (tile.structure == undefined) {
-    //         // console.log(tile.x, tile.y);
-    //     }
-    // }
-    
-    // if (MYROOM.energyCapacityAvailable < 550) {
-    //     let extensionsNeeded = 5 - extensions.length;
-    //     for (let construction of myconstructions) {
-    //         if (construction.structureType == STRUCTURE_EXTENSION) {
-    //             extensionsNeeded--;
-    //         }
-    //     }
-    //     // const parity = (MYSPAWNER.pos.x + MYSPAWNER.pos.y) % 2;
-    //     // while (extensionsNeeded > 0) {
-    //     //     let tiles = support.getTilesInArea(MYSPAWNER, 2, true);
-    //     //     for (let tile of tiles) {
-    //     //         if (tile.structure == undefined && (tile.x + tile.y) % 2 == parity) {
-    //     //             MYROOM.createConstructionSite(tile.x, tile.y, STRUCTURE_EXTENSION);
-    //     //             extensionsNeeded--;
-    //     //         }
-    //     //     }
-    //     // }
-    // }    
-    
+
     // Spawn
     for (let role of Object.keys(roles)) {
         let census =  _.sum(Game.creeps, (creep) => creep.memory.role == role);
-        if (census < roles[role].amount) {
+        if (census < roles[role].quota) {
             let newName = role + Game.time;
             let memory = {role: role};
             switch (role) {
-                case 'hyperminer':
+                case 'hyperminer2':
                     memory.sourceid = sources[0].id;
             }
         //    console.log("Spawning", role);
@@ -142,7 +130,9 @@ module.exports.loop = function () {
                 creep.memory.lastpos = {x:creep.pos.x, y:creep.pos.y};
                 let count = support.getRoomMemory(creep.room, creep.pos, 'antcrumbs');
                 count = count ? count : 0;
-                support.setRoomMemory(creep.room, creep.pos, 'antcrumbs', count + 1);
+                if (count < 99) {
+                    support.setRoomMemory(creep.room, creep.pos, 'antcrumbs', count + 1);
+                }
             }
         }
     }
@@ -152,7 +142,7 @@ module.exports.loop = function () {
     for (tile of Object.keys(MYROOM.memory)) {
         const pos = tile.split(",");
         if (MYROOM.memory[tile].antcrumbs) {
-            MYROOM.visual.text(MYROOM.memory[tile].antcrumbs, Number(pos[0]), Number(pos[1]), {font: "12px"});
+            // MYROOM.visual.text(MYROOM.memory[tile].antcrumbs, Number(pos[0]), Number(pos[1]), {font: "12px"});
         }
         if (MYROOM.memory[tile].antcrumbs > ROADLIMIT) {
             MYROOM.createConstructionSite(Number(pos[0]), Number(pos[1]), STRUCTURE_ROAD);
@@ -171,9 +161,9 @@ module.exports.loop = function () {
         }
     
         // Always be safe.
-        if (!(MYROOM.controller.safeMode)) {
-            MYROOM.controller.activateSafeMode();
-        }
+        // if (!(MYROOM.controller.safeMode)) {
+        //     MYROOM.controller.activateSafeMode();
+        // }
 
     }
 }
