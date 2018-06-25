@@ -23,6 +23,11 @@ module.exports.loop = function () {
         MYROOM.memory = {};
     }
 
+    // support.print(support.genParts({MOVE:3, ATTACK:2}));
+    // support.print(support.genParts2([[MOVE, 3], [ATTACK, 2]]));
+    // console.log(typeof {MOVE:3, ATTACK:2});
+    // console.log(typeof [[MOVE, 3], [ATTACK, 2]]);
+
     // support.print(MYROOM.lookForAt(LOOK_STRUCTURES,41,19))
 
     // Erase memory of dead screeps
@@ -82,19 +87,24 @@ module.exports.loop = function () {
     roles.upgrader2.quota = 0;
     roles.supplier2.quota = 0;
     roles.builder2.quota = 0;
+
     
     // Spawn
     for (let role of Object.keys(roles)) {
-        let census =  _.sum(Game.creeps, (creep) => creep.memory.role == role);
-        if (census < roles[role].quota) {
-            let newName = role + Game.time;
-            let memory = {role: role};
-            switch (role) {
-                case 'hyperminer2':
-                    memory.sourceid = sources[0].id;
+        if (roles[role].quota > 0) {
+            if (MYROOM.energyAvailable >= roles[role].cost) {
+                let census =  _.sum(Game.creeps, (creep) => creep.memory.role == role);
+                if (census < roles[role].quota) {
+                    let newName = role + Game.time;
+                    let memory = {role: role};
+                    switch (role) {
+                        case 'hyperminer2':
+                            memory.sourceid = sources[0].id;
+                            break;
+                    }
+                    let result = MYSPAWNER.spawnCreep(roles[role].parts, newName, {memory: memory});
+                }
             }
-        //    console.log("Spawning", role);
-            MYSPAWNER.spawnCreep(roles[role].parts, newName, {memory: memory})
         }
     }
 
@@ -156,7 +166,7 @@ module.exports.loop = function () {
     }
     
     // Do some logic less often than every tick
-    if (Game.time % 50 == 0) {
+    if (Game.time % 100 == 0) {
         for (tile of Object.keys(MYROOM.memory)) {
             const value = support.getRoomMemory(MYROOM, tile, "antcrumbs");
             if (value > 1) {

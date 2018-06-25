@@ -2,6 +2,7 @@
 // Game.spawns['Spawn1'].spawnCreep( [WORK,WORK,CARRY,MOVE],'a',{ memory: { role: 'harvester' } } );
 // Game.creeps['a'].move(TOP);
 // https://github.com/bonzaiferroni/bonzAI/wiki/Traveler-API
+// JSON.stringify(Game.spawns.Spawn1.room,null,1)
 
 /*
     IDEAS:
@@ -79,16 +80,20 @@ module.exports.loop = function () {
 
     // Spawn
     for (let role of Object.keys(roles)) {
-        let census =  _.sum(Game.creeps, (creep) => creep.memory.role == role);
-        if (census < roles[role].quota) {
-            let newName = role + Game.time;
-            let memory = {role: role};
-            switch (role) {
-                case 'hyperminer2':
-                    memory.sourceid = sources[0].id;
+        if (roles[role].quota > 0) {
+            if (MYROOM.energyAvailable >= roles[role].cost) {
+                let census =  _.sum(Game.creeps, (creep) => creep.memory.role == role);
+                if (census < roles[role].quota) {
+                    let newName = role + Game.time;
+                    let memory = {role: role};
+                    switch (role) {
+                        case 'hyperminer2':
+                            memory.sourceid = sources[0].id;
+                            break;
+                    }
+                    let result = MYSPAWNER.spawnCreep(roles[role].parts, newName, {memory: memory});
+                }
             }
-        //    console.log("Spawning", role);
-            MYSPAWNER.spawnCreep(roles[role].parts, newName, {memory: memory})
         }
     }
 

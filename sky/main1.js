@@ -18,15 +18,18 @@ module.exports.loop = function () {
 
     // Spawn
     for (let role of Object.keys(roles)) {
-        var census =  _.filter(Game.creeps, (creep) => creep.memory.role == role);
-        if(census.length < roles[role].quota) {
-            var newName = role + Game.time;
-            let memory = {role: role};
-            // Pass extra memory flags to certain roles
-            switch (role) {
-                default:
+        if (roles[role].quota > 0) {
+            if (MYROOM.energyAvailable >= roles[role].cost) {
+                let census =  _.sum(Game.creeps, (creep) => creep.memory.role == role);
+                if (census < roles[role].quota) {
+                    let newName = role + Game.time;
+                    let memory = {role: role};
+                    switch (role) {
+                        default:
+                    }
+                    let result = MYSPAWNER.spawnCreep(roles[role].parts, newName, {memory: memory});
+                }
             }
-            MYSPAWNER.spawnCreep(roles[role].parts, newName, {memory: memory})
         }
     }
 

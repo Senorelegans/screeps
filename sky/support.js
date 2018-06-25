@@ -86,6 +86,18 @@ module.exports = {
         7 : {name:"LEFT", dx:-1, dy:0},
         8 : {name:"TOP_LEFT", dx:-1, dy:-1},
     },
+
+    // Generates a list of parts for building
+    // Example input: support.genParts( [ [WORK,1], [CARRY,1], [MOVE,2] ] );
+    genParts: function(partsObj) {
+        longList = [];
+        for (let i in partsObj) {
+            for (let j = 0; j < partsObj[i][1]; j++) {
+                longList.push(partsObj[i][0]);
+            }
+        }
+        return longList;
+    },
     
     // Calculate cost of a set of parts
     getCost: function(parts) {
