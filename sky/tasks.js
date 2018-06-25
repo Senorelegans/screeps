@@ -107,6 +107,23 @@ module.exports = {
         }
     },
 
+    // Deposits energy to the nearest container
+    // Returns true if picking up
+    // Returns false if no containers with energy found
+    despoitNearestEnergy: function(creep) {
+        let container = creep.pos.findClosestByRange(FIND_STRUCTURES, {filter: function(structure) {
+            return structure.structureType == STRUCTURE_CONTAINER && (structure.store.storeCapacity - structure.store.energy >= creep.carry.RESOURCE_ENERGY)
+        }});
+        if (container) {
+            if (creep.deposit(container, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+                creep.moveTo(container);
+            }
+            return true;
+        } else {
+            return false;
+        }
+    },
+
     // Mines the nearest source
     // Returns result of mining
     // Returns false if no sources found

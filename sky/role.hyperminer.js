@@ -51,10 +51,9 @@ module.exports = {
 
         // Get source from memory, and move toward it
         if (creep.memory.sourceid) {
+            // Get source from memory
             let source = Game.getObjectById(creep.memory.sourceid);
-            if (creep.memory.worktarget) {
-
-            }
+            
             let movetarget = source;
             // If there is a container next to the source, move to it instead
             let tiles = creep.room.lookForAtArea(LOOK_STRUCTURES, ...support.getTLBR(source, 1), true);

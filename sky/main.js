@@ -8,6 +8,7 @@
 
 let main1 = require('main1');
 let main2 = require('main2');
+let main3 = require('main3');
 
 module.exports.loop = function () {
     const spawner = "Spawn1";
@@ -18,8 +19,11 @@ module.exports.loop = function () {
         case 2:
             main2.loop();
             break;
+        case 3:
+            main3.loop();
+            break;
         default:
-            main2.loop();
+            main3.loop();
             break;
     }
 }

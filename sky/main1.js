@@ -21,7 +21,7 @@ module.exports.loop = function () {
     // Creep census
     let roles = {
         'recycle': {amount:0, actions:roleRecycle},
-        'harvester': {amount:4, parts:[WORK,WORK,CARRY,MOVE], cost:300, actions:roleJack},
+        'harvester': {amount:3, parts:[WORK,WORK,CARRY,MOVE], cost:300, actions:roleJack},
     };
 
     // Spawn
@@ -30,9 +30,9 @@ module.exports.loop = function () {
         if(census.length < roles[role].amount) {
             var newName = role + Game.time;
             let memory = {role: role};
+            // Pass extra memory flags to certain roles
             switch (role) {
                 case 'harvester':
-                    memory.sourceid = sources[0].id;
                     break;
             }
             MYSPAWNER.spawnCreep(roles[role].parts, newName, {memory: memory})
