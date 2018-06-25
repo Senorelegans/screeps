@@ -20,10 +20,6 @@ let roleUpgrader = require('role.upgrader');
 module.exports.loop = function () {
     support.erasedead();
 
-
-
-
-
     const spawnername = "Spawn1";
     const MYSPAWNER = Game.spawns[spawnername];
     const MYROOM = MYSPAWNER.room;
@@ -45,8 +41,6 @@ module.exports.loop = function () {
 
     makecreeps.creeps2(MYSPAWNER,sources);
     support.SpawnerInfo(MYSPAWNER);
-
-
 
     if (extensions < 5) {
         AREA = support.getTilesInArea(MYSPAWNER, 2, 'checkerboard', false, -3,-2);

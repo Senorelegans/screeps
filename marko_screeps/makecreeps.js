@@ -16,25 +16,25 @@ module.exports = {
         let roles = {
             'recycle': {amount: 0, actions: roleRecycle},
             'upgrader': {
-                amount: 2,
-                group: 0,
+                amount: 0,
+                group: 3,
                 groupcap: 1,
                 parts: [WORK, WORK, WORK, WORK, CARRY, MOVE, MOVE],
                 cost: 550,
                 actions: roleUpgrader
             },
             'harvester': {
-                amount: 8,
+                amount: 16,
                 group: 0,
-                groupcap: 4,
+                groupcap: 8,
                 parts: [WORK, WORK, CARRY, MOVE],
                 cost: 300,
                 actions: roleHarvester
             },
             'builder': {
-                amount: 3,
+                amount: 5,
                 group: 0,
-                groupcap: 10,
+                groupcap: 5,
                 parts: [WORK, WORK, CARRY, MOVE],
                 cost: 300,
                 actions: roleBuilder
@@ -48,16 +48,17 @@ module.exports = {
                 roles[role].amount = 0; // stop making builders if over 5 extensions
             }
 
-
-
             if (census.length < roles[role].amount) {
                 let newName = role + Game.time;
                 let memory = {role: role};
                 memory.group = Math.floor(census.length / roles[role].groupcap);
+
                 switch (role) {
                     case 'harvester':
                         memory.sourceid = sources[memory.group].id;
                         break;
+                    case 'builder':
+                        memory.sourceid = sources[memory.group].id;
                 }
                 MYSPAWNER.spawnCreep(roles[role].parts, newName, {memory: memory});
             }
@@ -72,6 +73,8 @@ module.exports = {
                 case 'harvester':
                     roles[creep.memory.role].actions.run(creep);
                     break;
+                case 'builder':
+                    roles[creep.memory.role].actions.run(creep);
                 default:
                     roles[creep.memory.role].actions.run(creep);
             }

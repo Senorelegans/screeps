@@ -6,7 +6,9 @@ module.exports = {
         } else if (creep.carry.energy == 0) {
             creep.memory.mode = "filling";
         }
-        
+
+
+
         switch (creep.memory.mode) {
             case "filling":
                 const gil = creep.pos.findClosestByRange(FIND_DROPPED_RESOURCES);
