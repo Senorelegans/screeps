@@ -10,11 +10,11 @@ module.exports.loop = function () {
     support.erasedead();
     
     // Set quotas
-    roles.jack1.quota = 3;
+    roles.jack1.quota = 2;
     roles.miner1.quota = 0;
     roles.supplier1.quota = 0;
     roles.builder1.quota = 0;
-    roles.upgrader1.quota = 0;
+    roles.upgrader1.quota = 1;
 
     // Spawn
     for (let role of Object.keys(roles)) {
@@ -28,6 +28,9 @@ module.exports.loop = function () {
                         default:
                     }
                     let result = MYSPAWNER.spawnCreep(roles[role].parts, newName, {memory: memory});
+                    if (result != OK) {
+                        console.log("Spawner error", result);
+                    }
                 }
             }
         }

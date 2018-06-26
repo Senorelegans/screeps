@@ -17,6 +17,7 @@ module.exports.loop = function () {
     const spawnername = "Spawn1";
     const MYSPAWNER = Game.spawns[spawnername];
     const MYROOM = MYSPAWNER.room;
+    const ROADLIMIT = 99;
 
     // Initialize room memory
     if (MYROOM.memory == undefined) {
@@ -88,6 +89,44 @@ module.exports.loop = function () {
     roles.supplier2.quota = 0;
     roles.builder2.quota = 0;
 
+    const hostiles = MYROOM.find(FIND_HOSTILE_CREEPS, {filter: function(object) {
+        return object.getActiveBodyparts(ATTACK) > 0 || object.getActiveBodyparts(RANGED_ATTACK) > 0;
+    }});
+    if (hostiles.length > 0) {
+        roles.grunt3.quota = 2;
+    }
+
+    if (MYROOM.energyCapacityAvailable < 800) {
+        
+        // Include looking for flag for alternate extension farm area
+        
+        // Build extensions
+        let extensionsNeeded = 10 - extensions.length;
+        let extensionsBuilding = MYROOM.find(FIND_MY_CONSTRUCTION_SITES, {filter: { structureType: STRUCTURE_EXTENSION }}).length;
+        let searchOffset = Math.ceil(Math.sqrt((extensionsNeeded - extensionsBuilding) - 1));
+        const parity = (MYSPAWNER.pos.x + MYSPAWNER.pos.y) % 2;
+        const maxloops = 20;
+        let loops = 0;
+        while (extensionsBuilding < extensionsNeeded && loops < maxloops) {
+            let tiles = support.getTerrainInArea(MYSPAWNER, searchOffset, true);
+            for (let tile of tiles) {
+                if ((tile.x + tile.y) % 2 == parity) {
+                    if (tile.terrain != "wall") {
+                        if (MYROOM.lookForAt(LOOK_STRUCTURES, tile.x, tile.y).length == 0 && MYROOM.lookForAt(LOOK_CONSTRUCTION_SITES, tile.x, tile.y).length == 0) {
+                            if (extensionsBuilding < extensionsNeeded) {
+                                MYROOM.createConstructionSite(tile.x, tile.y, STRUCTURE_EXTENSION);
+                                extensionsBuilding++;
+                            }
+                        }
+                    }
+                }
+            }
+            searchOffset++;
+            loops++;
+        }
+    } else {
+        
+    }
     
     // Spawn
     for (let role of Object.keys(roles)) {
@@ -103,6 +142,9 @@ module.exports.loop = function () {
                             break;
                     }
                     let result = MYSPAWNER.spawnCreep(roles[role].parts, newName, {memory: memory});
+                    if (result != OK) {
+                        console.log("Spawner error", result);
+                    }
                 }
             }
         }
@@ -146,7 +188,7 @@ module.exports.loop = function () {
                 creep.memory.lastpos = {x:creep.pos.x, y:creep.pos.y};
                 let count = support.getRoomMemory(creep.room, creep.pos, 'antcrumbs');
                 count = count ? count : 0;
-                if (count < 99) {
+                if (count < ROADLIMIT) {
                     support.setRoomMemory(creep.room, creep.pos, 'antcrumbs', count + 1);
                 }
             }
@@ -154,7 +196,6 @@ module.exports.loop = function () {
     }
 
     // Draw antcrumb values on map, build roads at any tiles exceeding ROADLIMIT
-    const ROADLIMIT = 99;
     for (tile of Object.keys(MYROOM.memory)) {
         const pos = tile.split(",");
         if (MYROOM.memory[tile].antcrumbs) {
@@ -175,11 +216,5 @@ module.exports.loop = function () {
                 support.clearRoomMemory(MYROOM, tile, "antcrumbs");
             }
         }
-    
-        // Always be safe.
-        // if (!(MYROOM.controller.safeMode)) {
-        //     MYROOM.controller.activateSafeMode();
-        // }
-
     }
 }

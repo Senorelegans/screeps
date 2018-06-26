@@ -90,7 +90,7 @@ module.exports = {
     // Generates a list of parts for building
     // Example input: support.genParts( [ [WORK,1], [CARRY,1], [MOVE,2] ] );
     genParts: function(partsObj) {
-        longList = [];
+        let longList = [];
         for (let i in partsObj) {
             for (let j = 0; j < partsObj[i][1]; j++) {
                 longList.push(partsObj[i][0]);
@@ -124,6 +124,16 @@ module.exports = {
             if(!Game.creeps[name]) {
                 delete Memory.creeps[name];
             }
+        }
+    },
+
+    // Activate safe mode if hostile attackers are found
+    autosafe: function(room) {
+        const hostiles = room.find(FIND_HOSTILE_CREEPS, {filter: function(object) {
+            return object.getActiveBodyparts(ATTACK) > 0 || object.getActiveBodyparts(RANGED_ATTACK) > 0;
+        }});
+        if (hostiles.length > 0) {
+            room.controller.activateSafeMode();
         }
     },
     

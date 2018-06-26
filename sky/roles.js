@@ -38,7 +38,7 @@ module.exports = {
     'jack1': {parts:support.genParts([[WORK,2],[CARRY,1],[MOVE,1]]), cost:300, actions:roleJack},
     'miner1': {parts:support.genParts([[WORK,2],[CARRY,1],[MOVE,1]]), cost:300, actions:roleMiner},
     'builder1': {parts:support.genParts([[WORK,2],[CARRY,1],[MOVE,1]]), cost:300, actions:roleBuilder},
-    'upgrader1': {parts:support.genParts([[WORK,2],[CARRY,1],[MOVE,1]]), cost:550, actions:roleUpgrader},
+    'upgrader1': {parts:support.genParts([[WORK,2],[CARRY,1],[MOVE,1]]), cost:300, actions:roleUpgrader},
     'supplier1': {parts:support.genParts([[CARRY,2],[MOVE,2]]), cost:200, actions:roleSupplier},
     'grunt1': {parts:support.genParts([[TOUGH,2],[MOVE,3],[ATTACK,1]]), cost:250, actions:roleGrunt},
     'archer1': {parts:support.genParts([[MOVE,1],[RANGED_ATTACK,1]]), cost:200, actions:roleArcher},
@@ -56,6 +56,9 @@ roles.miner3.quota = 0;
 roles.upgrader3.quota = 0;
 roles.supplier3.quota = 0;
 roles.builder3.quota = 0;
+roles.grunt3.quota = 0;
+roles.archer3.quota = 0;
+roles.medic3.quota = 0;
 // Tier 2
 roles.jack2.quota = 0;
 roles.miner2.quota = 0;

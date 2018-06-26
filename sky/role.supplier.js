@@ -15,8 +15,6 @@ module.exports = {
                     creep.memory.action = "picking up gil";
                 } else if (tasks.withdrawNearestEnergy(creep)) {
                     creep.memory.action = "withdrawing";
-                } else if (tasks.mineNearestSource(creep)) {
-                    creep.memory.action = "mining";
                 } else {
                     creep.memory.action = "idling";
                 }

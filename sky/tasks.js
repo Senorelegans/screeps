@@ -125,12 +125,13 @@ module.exports = {
     },
 
     // Mines the nearest source
-    // Returns result of mining
+    // Returns true if mining
     // Returns false if no sources found
     mineNearestSource: function(creep) {
         let source = creep.pos.findClosestByPath(FIND_SOURCES_ACTIVE);
         if (source) {
-            return module.exports.mineSource(creep, source);
+            let result = module.exports.mineSource(creep, source);
+            return true;
         } else {
             return false;
         }
@@ -148,7 +149,7 @@ module.exports = {
                 break;
             case ERR_NOT_IN_RANGE:
                 creep.memory.action = "moving toward source";
-                creep.moveTo(source, {visualizePathStyle: {stroke: '#ffffff'}});
+                creep.moveTo(source);
                 break;
             case ERR_NOT_ENOUGH_RESOURCES:
                 creep.memory.action = "waiting for source to regenerate";

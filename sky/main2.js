@@ -18,6 +18,7 @@ module.exports.loop = function () {
     const spawnername = "Spawn1";
     const MYSPAWNER = Game.spawns[spawnername];
     const MYROOM = MYSPAWNER.room;
+    const ROADLIMIT = 99;
 
     // Initialize room memory
     if (MYROOM.memory == undefined) {
@@ -42,10 +43,10 @@ module.exports.loop = function () {
         // Include looking for flag for alternate extension farm area
 
         // Set quotas
-        // Tier 1
         roles.jack1.quota = 1;
         roles.builder1.quota = 2;
         roles.upgrader1.quota = 1;
+        // Build extensions
         let extensionsNeeded = 5 - extensions.length;
         let extensionsBuilding = MYROOM.find(FIND_MY_CONSTRUCTION_SITES, {filter: { structureType: STRUCTURE_EXTENSION }}).length;
         let searchOffset = Math.ceil(Math.sqrt((extensionsNeeded - extensionsBuilding) - 1));
@@ -69,13 +70,46 @@ module.exports.loop = function () {
             searchOffset++;
             loops++;
         }
+        // Build containers
+        for (let source of sources) {
+            // Only look at sources being used
+            if (source.energy != source.energyCapacity) {
+                let hasContainer = false;
+                // Check for adjacent containers
+                
+                let adjStructures = source.room.lookForAtArea(LOOK_STRUCTURES, ...support.getTLBR(source, 1), true);
+                for (let structure of adjStructures) {
+                    if (structure.structureType == STRUCTURE_CONTAINER) {
+                        hasContainer = true;
+                    }
+                }
+                // Check for adjacent containers
+                let adjSites = source.room.lookForAtArea(LOOK_CONSTRUCTION_SITES, ...support.getTLBR(source, 1), true);
+                for (let site of adjSites) {
+                    if (site.constructionSite.structureType == STRUCTURE_CONTAINER) {
+                        hasContainer = true;
+                    }
+                }
+                // Build a container
+                if (!hasContainer) {
+                    let adj = source.room.lookForAtArea(LOOK_TERRAIN, ...support.getTLBR(source, 1), true).filter(tile => tile.terrain != "wall");
+                    adj = support.sortBy(adj, MYSPAWNER.pos.getRangeTo.bind(MYSPAWNER.pos), "pos");
+                    for (let tile of adj) {
+                        if (MYROOM.lookForAt(LOOK_STRUCTURES, tile.x, tile.y).length == 0 && MYROOM.lookForAt(LOOK_CONSTRUCTION_SITES, tile.x, tile.y).length == 0) {
+                            MYROOM.createConstructionSite(tile.x, tile.y, STRUCTURE_CONTAINER);
+                            break;
+                        }
+                    }
+                }
+            }
+        }
     } else {
         // Set quotas
         // Tier 2;
         roles.hyperminer2.quota = 1;
         roles.jack2.quota = 2;
         roles.upgrader2.quota = 2;
-    }    
+    } 
     
 
     // Spawn
@@ -92,6 +126,9 @@ module.exports.loop = function () {
                             break;
                     }
                     let result = MYSPAWNER.spawnCreep(roles[role].parts, newName, {memory: memory});
+                    if (result != OK) {
+                        console.log("Spawner error", result);
+                    }
                 }
             }
         }
@@ -135,7 +172,7 @@ module.exports.loop = function () {
                 creep.memory.lastpos = {x:creep.pos.x, y:creep.pos.y};
                 let count = support.getRoomMemory(creep.room, creep.pos, 'antcrumbs');
                 count = count ? count : 0;
-                if (count < 99) {
+                if (count < ROADLIMIT) {
                     support.setRoomMemory(creep.room, creep.pos, 'antcrumbs', count + 1);
                 }
             }
@@ -143,8 +180,7 @@ module.exports.loop = function () {
     }
 
     // Draw antcrumb values on map, build roads at any tiles exceeding ROADLIMIT
-    const ROADLIMIT = 99;
-    for (tile of Object.keys(MYROOM.memory)) {
+    for (let tile of Object.keys(MYROOM.memory)) {
         const pos = tile.split(",");
         if (MYROOM.memory[tile].antcrumbs) {
             // MYROOM.visual.text(MYROOM.memory[tile].antcrumbs, Number(pos[0]), Number(pos[1]), {font: "12px"});
@@ -156,7 +192,7 @@ module.exports.loop = function () {
     
     // Do some logic less often than every tick
     if (Game.time % 50 == 0) {
-        for (tile of Object.keys(MYROOM.memory)) {
+        for (let tile of Object.keys(MYROOM.memory)) {
             const value = support.getRoomMemory(MYROOM, tile, "antcrumbs");
             if (value > 1) {
                 support.setRoomMemory(MYROOM, tile, "antcrumbs", value - 1);
@@ -164,11 +200,5 @@ module.exports.loop = function () {
                 support.clearRoomMemory(MYROOM, tile, "antcrumbs");
             }
         }
-    
-        // Always be safe.
-        // if (!(MYROOM.controller.safeMode)) {
-        //     MYROOM.controller.activateSafeMode();
-        // }
-
     }
 }

@@ -6,13 +6,20 @@
 // Game.creeps['a'].move(TOP);
 // https://github.com/bonzaiferroni/bonzAI/wiki/Traveler-API
 
+let support = require('support');
 let main1 = require('main1');
 let main2 = require('main2');
 let main3 = require('main3');
 
 module.exports.loop = function () {
-    const spawner = "Spawn1";
-    switch (Game.spawns[spawner].room.controller.level) {
+    const spawnername = "Spawn1";
+    const MYSPAWNER = Game.spawns[spawnername];
+    const MYROOM = MYSPAWNER.room;
+
+    // Activate safe mode if hostile attackers are found
+    support.autosafe(MYROOM);
+
+    switch (MYROOM.controller.level) {
         case 1:
             main1.loop();
             break;
