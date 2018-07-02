@@ -31,14 +31,16 @@ module.exports = {
                 break;
                 
             case "emptying":
-                if (tasks.supplySpawns(creep)) {
+                if (false) {
+
+                } else if (tasks.supplySpawns(creep)) {
                     creep.memory.action = "supplying";
-                } else if (tasks.repairStructures(creep)) {
-                    creep.memory.action = "repairing";
                 } else if (tasks.buildStructures(creep)) {
                     creep.memory.action = "building";
                 } else if (tasks.repairClosestWalls(creep)) {
                     creep.memory.action = "walling";
+                } else if (tasks.repairStructures(creep)) {
+                    creep.memory.action = "repairing";
                 } else if (tasks.upgradeController(creep)) {
                     creep.memory.action = "upgrading";
                 } else {

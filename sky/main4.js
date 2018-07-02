@@ -82,7 +82,8 @@ module.exports.loop = function () {
     roles.hyperminer2.quota = 2;
     roles.longhauler2.quota = 0;
     roles.jack2.quota = 1;
-    roles.janitor2.quota = 2;
+    roles.janitor2.quota = 1;
+    roles.hauler2.quota = 2;
     roles.upgrader2.quota = 1;
     roles.supplier2.quota = 2;
     roles.builder2.quota = 4;
@@ -97,7 +98,7 @@ module.exports.loop = function () {
         roles.grunt3.quota = 2;
     }
 
-    if (MYROOM.energyCapacityAvailable < 1050) {
+    if (MYROOM.energyCapacityAvailable < 1300) {
         
         // Include looking for flag for alternate extension farm area
         

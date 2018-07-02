@@ -17,10 +17,10 @@ module.exports = {
             case "filling":
                 if (false) {
                     
-                } else if (tasks.pickupDroppedFarthestFrom(creep, target.pos)) {
-                    creep.memory.action = "picking up gil";
                 } else if (tasks.withdrawFromContainers(creep)) {
                     creep.memory.action = "withdraw container";
+                } else if (tasks.pickupDroppedFarthestFrom(creep, target.pos)) {
+                    creep.memory.action = "picking up gil";
                 } else {
                     if (creep.carry.energy > 0) {
                         creep.memory.mode = "emptying";
