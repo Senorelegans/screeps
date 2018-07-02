@@ -44,8 +44,51 @@ module.exports = {
     },
 
     repairStructures: function(creep) {
-        let target = creep.pos.findClosestByPath(FIND_STRUCTURES, {filter: structure => structure.hits < structure.hitsMax});
+        let target = creep.pos.findClosestByPath(FIND_STRUCTURES, {
+            filter: structure =>
+            structure.structureType != STRUCTURE_WALL &&
+            structure.structureType != STRUCTURE_RAMPART &&
+            structure.hits < structure.hitsMax
+        });
         if (target) {
+            if(creep.repair(target) == ERR_NOT_IN_RANGE) {
+                creep.moveTo(target);
+            }
+            return true;
+        } else {
+            return false;
+        }
+    },
+
+    repairClosestWalls: function(creep, maxHits = 100000) {
+        let target = creep.pos.findClosestByPath(FIND_STRUCTURES, {
+            filter: structure =>
+            (structure.structureType == STRUCTURE_WALL ||
+            structure.structureType == STRUCTURE_RAMPART) &&
+            structure.hits < maxHits
+        });
+        if (target) {
+            if(creep.repair(target) == ERR_NOT_IN_RANGE) {
+                creep.moveTo(target);
+            }
+            return true;
+        } else {
+            return false;
+        }
+    },
+
+    repairWeakestWalls: function(creep, maxHits = 100000) {
+        let targets = creep.room.find(FIND_STRUCTURES, {
+            filter: structure =>
+            (structure.structureType == STRUCTURE_WALL ||
+            structure.structureType == STRUCTURE_RAMPART) &&
+            structure.hits < maxHits
+        });
+        if (targets) {
+            targets.sort(function(a,b) {
+                return (a.hits > b.hits) ? 1 : ((b.hits > a.hits) ? -1 : 0);
+            });
+            let target = targets[0];
             if(creep.repair(target) == ERR_NOT_IN_RANGE) {
                 creep.moveTo(target);
             }
@@ -107,7 +150,7 @@ module.exports = {
         }
     },
 
-    // Withdraws energy from the nearest container
+    // Withdraws energy from the storage or nearest container
     // Returns true if picking up
     // Returns false if no containers with energy found
     withdrawNearestEnergy: function(creep) {
@@ -116,7 +159,7 @@ module.exports = {
             container = creep.room.storage;
         } else {
             container = creep.pos.findClosestByPath(FIND_STRUCTURES, {filter: function(structure) {
-                return structure.structureType == STRUCTURE_CONTAINER && structure.store.energy > (creep.carry.energyCapacity - creep.carry.energy)
+                return structure.structureType == STRUCTURE_CONTAINER && structure.store.energy > (creep.carryCapacity - creep.carry.energy)
             }});
             if (!container) {
                 container = creep.pos.findClosestByPath(FIND_STRUCTURES, {filter: function(structure) {
@@ -134,7 +177,46 @@ module.exports = {
         }
     },
 
-    // Deposits energy to the nearest container
+    // Withdraws energy from the nearest containers
+    // Returns true if picking up
+    // Returns false if no containers with energy found
+    withdrawFromContainers: function(creep) {
+        // First look for containers with enough to fill
+        let container = creep.pos.findClosestByPath(FIND_STRUCTURES, {filter: function(structure) {
+            return structure.structureType == STRUCTURE_CONTAINER && structure.store.energy > (creep.carryCapacity - creep.carry.energy)
+        }});
+        if (!container) {
+            // Otherwise find any containers with energy
+            container = creep.pos.findClosestByPath(FIND_STRUCTURES, {filter: function(structure) {
+                return structure.structureType == STRUCTURE_CONTAINER && structure.store.energy > 0
+            }});
+        }
+        if (container) {
+            if (creep.withdraw(container, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+                creep.moveTo(container);
+            }
+            return true;
+        } else {
+            return false;
+        }
+    },
+
+    // Withdraws energy from the storage
+    // Returns true if picking up
+    // Returns false if no containers with energy found
+    withdrawFromStorage: function(creep) {
+        let container = creep.room.storage;
+        if (container && container.store.energy > 0) {
+            if (creep.withdraw(container, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+                creep.moveTo(container);
+            }
+            return true;
+        } else {
+            return false;
+        }
+    },
+
+    // Deposits energy to the storage or nearest container
     // Returns true if picking up
     // Returns false if no containers with energy found
     depositNearestEnergy: function(creep) {
@@ -154,6 +236,21 @@ module.exports = {
         if (container) {
             if (module.exports.goTo(creep, container)) {
                 creep.drop(RESOURCE_ENERGY);
+            }
+            return true;
+        } else {
+            return false;
+        }
+    },
+
+    // Deposits energy to the storage or nearest container
+    // Returns true if picking up
+    // Returns false if no containers with energy found
+    depositStorage: function(creep) {
+        let container = creep.room.storage;
+        if (container && container.store.energy < container.storeCapacity) {
+            if (creep.transfer(container, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+                creep.moveTo(container);
             }
             return true;
         } else {
@@ -200,4 +297,31 @@ module.exports = {
         return result;
     },
 
+    // Signs a room controller with a message
+    // Returns result of signing
+    signRoomController: function(creep, room, message) {
+        let roomObject = Game.rooms[room];
+        if (creep.room.name == room) {
+            let result = creep.signController(roomObject.controller, message);
+            switch (result) {
+                case OK:
+                    creep.memory.action = "signing controller";
+                    break;
+                case ERR_NOT_IN_RANGE:
+                    creep.moveTo(roomObject.controller)
+                    creep.memory.action = "moving toward controller";
+                    break;
+            }
+            return result;
+        } else {
+            const route = Game.map.findRoute(creep.room, room);
+            if(route.length > 0) {
+                const exit = creep.pos.findClosestByRange(route[0].exit);
+                creep.moveTo(exit);
+            }
+            // creep.moveTo(new RoomPosition(25, 25, room));
+            creep.memory.action = "moving to room";
+            return ERR_NOT_IN_RANGE;
+        }
+    },
 }

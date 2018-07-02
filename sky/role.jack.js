@@ -13,10 +13,12 @@ module.exports = {
             case "filling":
                 if (false) {
 
-                // } else if (tasks.pickupDropped(creep)) {
-                //     creep.memory.action = "picking up gil";
-                } else if (tasks.withdrawNearestEnergy(creep)) {
-                    creep.memory.action = "withdrawing";
+                } else if (tasks.withdrawFromStorage(creep)) {
+                    creep.memory.action = "withdraw storage"
+                } else if (tasks.withdrawFromContainers(creep)) {
+                    creep.memory.action = "withdraw container";
+                } else if (tasks.pickupDropped(creep)) {
+                    creep.memory.action = "picking up gil";
                 } else if (tasks.mineNearestSource(creep)) {
                     creep.memory.action = "mining";
                 } else {
@@ -35,6 +37,8 @@ module.exports = {
                     creep.memory.action = "repairing";
                 } else if (tasks.buildStructures(creep)) {
                     creep.memory.action = "building";
+                } else if (tasks.repairClosestWalls(creep)) {
+                    creep.memory.action = "walling";
                 } else if (tasks.upgradeController(creep)) {
                     creep.memory.action = "upgrading";
                 } else {

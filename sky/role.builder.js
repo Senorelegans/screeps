@@ -14,10 +14,12 @@ module.exports = {
 
                 // } else if (tasks.pickupDropped(creep)) {
                 //     creep.memory.action = "picking up gil";
-                } else if (tasks.withdrawNearestEnergy(creep)) {
-                    creep.memory.action = "withdrawing";
-                } else if (tasks.mineNearestSource(creep)) {
-                    creep.memory.action = "mining";
+                } else if (tasks.withdrawFromStorage(creep)) {
+                    creep.memory.action = "withdraw storage"
+                } else if (tasks.withdrawFromContainers(creep)) {
+                    creep.memory.action = "withdraw container";
+                // } else if (tasks.mineNearestSource(creep)) {
+                //     creep.memory.action = "mining";
                 } else {
                     if (creep.carry.energy > 0) {
                         creep.memory.mode = "emptying";
@@ -28,10 +30,14 @@ module.exports = {
                 break;
                 
             case "emptying":
-                if (tasks.repairStructures(creep)) {
-                    creep.memory.action = "repairing";
+                if (false) {
+
                 } else if (tasks.buildStructures(creep)) {
                     creep.memory.action = "building";
+                } else if (tasks.repairClosestWalls(creep)) {
+                    creep.memory.action = "walling";
+                } else if (tasks.repairStructures(creep)) {
+                    creep.memory.action = "repairing";
                 } else {
                     if (creep.carry.energy < creep.carryCapacity) {
                         creep.memory.mode = "filling";

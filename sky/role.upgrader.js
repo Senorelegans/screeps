@@ -15,8 +15,10 @@ module.exports = {
 
                 // } else if (tasks.pickupDropped(creep)) {
                 //     creep.memory.action = "picking up gil";
-                } else if (tasks.withdrawNearestEnergy(creep)) {
-                    creep.memory.action = "withdrawing";
+                } else if (tasks.withdrawFromStorage(creep)) {
+                    creep.memory.action = "withdraw storage"
+                } else if (tasks.withdrawFromContainers(creep)) {
+                    creep.memory.action = "withdraw container";
                 // } else if (tasks.mineNearestSource(creep)) {
                 //     creep.memory.action = "mining";
                 } else {

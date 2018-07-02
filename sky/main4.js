@@ -5,13 +5,13 @@
 
 /*
     IDEAS:
-    make Tasks.js to hold things like collectDrops(), harvestSource(src), repairTypes(types)
     expand on tech progress (automate building of extensions and different types of creeps)
-    put parts lists into role files?
+    have main do some searches and distribute tasks to creeps by role (minimize searching that creeps have to do, reduce overlaps)
 */
 
 let support = require('support');
 let roles = require('roles');
+let tasks = require('tasks');
 
 module.exports.loop = function () {
     const spawnername = "Spawn1";
@@ -56,12 +56,9 @@ module.exports.loop = function () {
                 tower.heal(closestHurtCreep);
             }
             // Repair buildings
-            let closestDamagedStructure = tower.pos.findClosestByRange(FIND_STRUCTURES, {
-                filter: (structure) => structure.hits < structure.hitsMax
-            });
-            if(closestDamagedStructure) {
-                tower.repair(closestDamagedStructure);
-            }
+            tasks.repairStructures(tower);
+            // Repair walls
+            tasks.repairWeakestWalls(tower, 1000);
             // Attack hostiles
             let closestHostile = tower.pos.findClosestByRange(FIND_HOSTILE_CREEPS);
             if(closestHostile) {
@@ -74,9 +71,9 @@ module.exports.loop = function () {
     // Tier 3
     roles.jack3.quota = 0;
     roles.miner3.quota = 0;
-    roles.upgrader3.quota = 3;
-    roles.supplier3.quota = 1;
-    roles.builder3.quota = 1;
+    roles.upgrader3.quota = 0;
+    roles.supplier3.quota = 0;
+    roles.builder3.quota = 0;
     roles.longhauler3.quota = 0;
     // Tier 2
     roles.grunt2.quota = 0;
@@ -85,12 +82,13 @@ module.exports.loop = function () {
     roles.hyperminer2.quota = 2;
     roles.longhauler2.quota = 0;
     roles.jack2.quota = 1;
-    roles.janitor2.quota = 4;
-    roles.upgrader2.quota = 0;
-    roles.supplier2.quota = 0;
-    roles.builder2.quota = 0;
+    roles.janitor2.quota = 2;
+    roles.upgrader2.quota = 1;
+    roles.supplier2.quota = 2;
+    roles.builder2.quota = 4;
     // Tier 1
     roles.jack1.quota = 1;
+    // roles.messenger.quota = 1;
 
     const hostiles = MYROOM.find(FIND_HOSTILE_CREEPS, {filter: function(object) {
         return object.getActiveBodyparts(ATTACK) > 0 || object.getActiveBodyparts(RANGED_ATTACK) > 0;
@@ -125,7 +123,7 @@ module.exports.loop = function () {
         //     loops++;
         // }
         // Build extensions
-        let extensionsNeeded = 15 - extensions.length;
+        let extensionsNeeded = 20 - extensions.length;
         let extensionsBuilding = MYROOM.find(FIND_MY_CONSTRUCTION_SITES, {filter: { structureType: STRUCTURE_EXTENSION }}).length;
         let searchOffset = Math.ceil(Math.sqrt((extensionsNeeded - extensionsBuilding) - 1));
         const parity = (MYSPAWNER.pos.x + MYSPAWNER.pos.y) % 2;
@@ -136,7 +134,8 @@ module.exports.loop = function () {
             for (let tile of tiles) {
                 if ((tile.x + tile.y) % 2 == parity) {
                     if (tile.terrain != "wall") {
-                        if (MYROOM.lookForAt(LOOK_STRUCTURES, tile.x, tile.y).length == 0 && MYROOM.lookForAt(LOOK_CONSTRUCTION_SITES, tile.x, tile.y).length == 0) {
+                        if (MYROOM.lookForAt(LOOK_STRUCTURES, tile.x, tile.y).filter(structure => structure.structureType != STRUCTURE_ROAD).length == 0 &&
+                            MYROOM.lookForAt(LOOK_CONSTRUCTION_SITES, tile.x, tile.y).filter(structure => structure.structureType != STRUCTURE_ROAD).length == 0) {
                             if (extensionsBuilding < extensionsNeeded) {
                                 MYROOM.createConstructionSite(tile.x, tile.y, STRUCTURE_EXTENSION);
                                 extensionsBuilding++;

@@ -17,6 +17,8 @@ module.exports = {
             case "filling":
                 if (tasks.pickupDroppedFarthestFrom(creep, target.pos)) {
                     creep.memory.action = "picking up gil";
+                } else if (tasks.withdrawFromContainers(creep)) {
+                    creep.memory.action = "withdraw container";
                 } else {
                     if (creep.carry.energy > 0) {
                         creep.memory.mode = "emptying";
@@ -27,8 +29,8 @@ module.exports = {
                 break;
                 
             case "emptying":
-                if (tasks.depositNearestEnergy(creep)) {
-                    creep.memory.action = "depositing";
+                if (tasks.depositStorage(creep)) {
+                    creep.memory.action = "deposit storage";
                 } else {
                     creep.memory.action = "dropping";
                     if (tasks.goToWithin(creep, target.pos, 2)) {
