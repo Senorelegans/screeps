@@ -90,13 +90,40 @@ module.exports = {
         }
     },
 
+    // Picks up resources laying around
+    // Returns true if picking up
+    // Returns false if no energy on ground
+    pickupDroppedFarthestFrom: function(creep, pos) {
+        let junk = creep.room.find(FIND_DROPPED_RESOURCES);
+        junk = support.sortBy(junk, pos.getRangeTo.bind(pos), "pos", false)
+        if (junk) {
+            junk = junk[0];
+            if (creep.pickup(junk) == ERR_NOT_IN_RANGE) {
+                creep.moveTo(junk);
+            }
+            return true;
+        } else {
+            return false;
+        }
+    },
+
     // Withdraws energy from the nearest container
     // Returns true if picking up
     // Returns false if no containers with energy found
     withdrawNearestEnergy: function(creep) {
-        let container = creep.pos.findClosestByRange(FIND_STRUCTURES, {filter: function(structure) {
-            return structure.structureType == STRUCTURE_CONTAINER && structure.store.energy > 0
-        }});
+        let container = undefined;
+        if (creep.room.storage && creep.room.storage.store.energy > 0) {
+            container = creep.room.storage;
+        } else {
+            container = creep.pos.findClosestByPath(FIND_STRUCTURES, {filter: function(structure) {
+                return structure.structureType == STRUCTURE_CONTAINER && structure.store.energy > (creep.carry.energyCapacity - creep.carry.energy)
+            }});
+            if (!container) {
+                container = creep.pos.findClosestByPath(FIND_STRUCTURES, {filter: function(structure) {
+                    return structure.structureType == STRUCTURE_CONTAINER && structure.store.energy > 0
+                }});
+            }
+        }
         if (container) {
             if (creep.withdraw(container, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
                 creep.moveTo(container);
@@ -110,13 +137,23 @@ module.exports = {
     // Deposits energy to the nearest container
     // Returns true if picking up
     // Returns false if no containers with energy found
-    despoitNearestEnergy: function(creep) {
-        let container = creep.pos.findClosestByRange(FIND_STRUCTURES, {filter: function(structure) {
-            return structure.structureType == STRUCTURE_CONTAINER && (structure.store.storeCapacity - structure.store.energy >= creep.carry.RESOURCE_ENERGY)
-        }});
+    depositNearestEnergy: function(creep) {
+        let container = undefined;
+        if (creep.room.storage) {
+            container = creep.room.storage;
+        } else {
+            container = creep.pos.findClosestByRange(FIND_STRUCTURES, {filter: function(structure) {
+                return (structure.structureType == STRUCTURE_CONTAINER && (structure.storeCapacity - structure.store[RESOURCE_ENERGY] > creep.carry.energy))
+            }});
+            if (!container) {
+                container = creep.pos.findClosestByRange(FIND_STRUCTURES, {filter: function(structure) {
+                    return (structure.structureType == STRUCTURE_CONTAINER && (structure.storeCapacity - structure.store[RESOURCE_ENERGY] > 0))
+                }});
+            }
+        }
         if (container) {
-            if (creep.deposit(container, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-                creep.moveTo(container);
+            if (module.exports.goTo(creep, container)) {
+                creep.drop(RESOURCE_ENERGY);
             }
             return true;
         } else {

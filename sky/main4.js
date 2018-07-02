@@ -85,7 +85,7 @@ module.exports.loop = function () {
     roles.hyperminer2.quota = 2;
     roles.longhauler2.quota = 0;
     roles.jack2.quota = 1;
-    roles.janitor2.quota = 2;
+    roles.janitor2.quota = 4;
     roles.upgrader2.quota = 0;
     roles.supplier2.quota = 0;
     roles.builder2.quota = 0;
@@ -99,12 +99,33 @@ module.exports.loop = function () {
         roles.grunt3.quota = 2;
     }
 
-    if (MYROOM.energyCapacityAvailable < 800) {
+    if (MYROOM.energyCapacityAvailable < 1050) {
         
         // Include looking for flag for alternate extension farm area
         
+        // Build storage
+        // let storageNeeded = 1 - MYROOM.find(FIND_MY_STRUCTURES, {filter: { structureType: STRUCTURE_STORAGE }}).length;
+        // let storageBuilding = MYROOM.find(FIND_MY_CONSTRUCTION_SITES, {filter: { structureType: STRUCTURE_STORAGE }}).length;
+        // loops = 0;
+        // while (storageBuilding < storageNeeded && loops < maxloops) {
+        //     let tiles = support.getTerrainInArea(MYSPAWNER, searchOffset, true);
+        //     for (let tile of tiles) {
+        //         if ((tile.x + tile.y) % 2 == parity) {
+        //             if (tile.terrain != "wall") {
+        //                 if (MYROOM.lookForAt(LOOK_STRUCTURES, tile.x, tile.y).length == 0 && MYROOM.lookForAt(LOOK_CONSTRUCTION_SITES, tile.x, tile.y).length == 0) {
+        //                     if (storageBuilding < storageNeeded) {
+        //                         MYROOM.createConstructionSite(tile.x, tile.y, STRUCTURE_STORAGE);
+        //                         storageBuilding++;
+        //                     }
+        //                 }
+        //             }
+        //         }
+        //     }
+        //     searchOffset++;
+        //     loops++;
+        // }
         // Build extensions
-        let extensionsNeeded = 10 - extensions.length;
+        let extensionsNeeded = 15 - extensions.length;
         let extensionsBuilding = MYROOM.find(FIND_MY_CONSTRUCTION_SITES, {filter: { structureType: STRUCTURE_EXTENSION }}).length;
         let searchOffset = Math.ceil(Math.sqrt((extensionsNeeded - extensionsBuilding) - 1));
         const parity = (MYSPAWNER.pos.x + MYSPAWNER.pos.y) % 2;
@@ -119,27 +140,6 @@ module.exports.loop = function () {
                             if (extensionsBuilding < extensionsNeeded) {
                                 MYROOM.createConstructionSite(tile.x, tile.y, STRUCTURE_EXTENSION);
                                 extensionsBuilding++;
-                            }
-                        }
-                    }
-                }
-            }
-            searchOffset++;
-            loops++;
-        }
-        // Build tower
-        let towersNeeded = 1 - MYROOM.find(FIND_MY_STRUCTURES, {filter: { structureType: STRUCTURE_TOWER }}).length;
-        let towersBuilding = MYROOM.find(FIND_MY_CONSTRUCTION_SITES, {filter: { structureType: STRUCTURE_TOWER }}).length;
-        loops = 0;
-        while (towersBuilding < towersNeeded && loops < maxloops) {
-            let tiles = support.getTerrainInArea(MYSPAWNER, searchOffset, true);
-            for (let tile of tiles) {
-                if ((tile.x + tile.y) % 2 == parity) {
-                    if (tile.terrain != "wall") {
-                        if (MYROOM.lookForAt(LOOK_STRUCTURES, tile.x, tile.y).length == 0 && MYROOM.lookForAt(LOOK_CONSTRUCTION_SITES, tile.x, tile.y).length == 0) {
-                            if (towersBuilding < towersNeeded) {
-                                MYROOM.createConstructionSite(tile.x, tile.y, STRUCTURE_TOWER);
-                                towersBuilding++;
                             }
                         }
                     }
@@ -164,7 +164,7 @@ module.exports.loop = function () {
                         default:
                     }
                     let result = MYSPAWNER.spawnCreep(roles[role].parts, newName, {memory: memory});
-                    if (result != OK) {
+                    if (result != OK && result != -4) {
                         console.log("Spawner error", result);
                     }
                 }

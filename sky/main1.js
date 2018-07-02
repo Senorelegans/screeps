@@ -10,11 +10,12 @@ module.exports.loop = function () {
     support.erasedead();
     
     // Set quotas
-    roles.jack1.quota = 2;
+    roles.upgrader1.quota = 0;
+    roles.jack1.quota = 9;
     roles.miner1.quota = 0;
     roles.supplier1.quota = 0;
     roles.builder1.quota = 0;
-    roles.upgrader1.quota = 1;
+    
 
     // Spawn
     for (let role of Object.keys(roles)) {

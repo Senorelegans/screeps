@@ -1,6 +1,7 @@
 // https://docs.screeps.com/api/#Constants
 // https://docs.screeps.com/api/#Creep
 
+// for (let creep of Object.keys(Game.creeps)) {console.log(creep);}
 // Game.spawns['Spawn1'].room.controller.activateSafeMode();
 // Game.spawns['Spawn1'].spawnCreep( [WORK,WORK,CARRY,MOVE],'a',{ memory: { role: 'harvester' } } );
 // Game.creeps['a'].move(TOP);
@@ -10,6 +11,7 @@ let support = require('support');
 let main1 = require('main1');
 let main2 = require('main2');
 let main3 = require('main3');
+let main4 = require('main4');
 
 module.exports.loop = function () {
     const spawnername = "Spawn1";
@@ -29,8 +31,11 @@ module.exports.loop = function () {
         case 3:
             main3.loop();
             break;
+        case 4:
+            main4.loop();
+            break;
         default:
-            main3.loop();
+            main4.loop();
             break;
     }
 }

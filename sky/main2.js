@@ -43,9 +43,9 @@ module.exports.loop = function () {
         // Include looking for flag for alternate extension farm area
 
         // Set quotas
-        roles.jack1.quota = 1;
+        roles.jack1.quota = 5;
         roles.builder1.quota = 2;
-        roles.upgrader1.quota = 1;
+        roles.upgrader1.quota = 2;
         // Build extensions
         let extensionsNeeded = 5 - extensions.length;
         let extensionsBuilding = MYROOM.find(FIND_MY_CONSTRUCTION_SITES, {filter: { structureType: STRUCTURE_EXTENSION }}).length;
@@ -106,9 +106,9 @@ module.exports.loop = function () {
     } else {
         // Set quotas
         // Tier 2;
-        roles.hyperminer2.quota = 1;
-        roles.jack2.quota = 2;
-        roles.upgrader2.quota = 2;
+        roles.hyperminer2.quota = 2;
+        roles.jack2.quota = 4;
+        roles.upgrader2.quota = 4;
     } 
     
 

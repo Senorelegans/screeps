@@ -13,12 +13,16 @@ module.exports = {
                 if (tasks.mineNearestSource(creep)) {
                     creep.memory.action = "mining";
                 } else {
-                    creep.memory.action = "idling";
+                    if (creep.carry.energy > 0) {
+                        creep.memory.mode = "emptying";
+                    } else {
+                        creep.memory.action = "idling";
+                    }
                 }
                 break;
                 
             case "emptying":
-                if (tasks.despoitNearestEnergy(creep)) {
+                if (tasks.depositNearestEnergy(creep)) {
                     creep.memory.action = "depositing";
                 } else {
                     creep.memory.action = "dropping";

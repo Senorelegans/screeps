@@ -11,14 +11,20 @@ module.exports = {
         
         switch (creep.memory.mode) {
             case "filling":
-                if (tasks.pickupDropped(creep)) {
-                    creep.memory.action = "picking up gil";
+                if (false) {
+
+                // } else if (tasks.pickupDropped(creep)) {
+                //     creep.memory.action = "picking up gil";
                 } else if (tasks.withdrawNearestEnergy(creep)) {
                     creep.memory.action = "withdrawing";
                 } else if (tasks.mineNearestSource(creep)) {
                     creep.memory.action = "mining";
                 } else {
-                    creep.memory.action = "idling";
+                    if (creep.carry.energy > 0) {
+                        creep.memory.mode = "emptying";
+                    } else {
+                        creep.memory.action = "idling";
+                    }
                 }
                 break;
                 
@@ -32,7 +38,11 @@ module.exports = {
                 } else if (tasks.upgradeController(creep)) {
                     creep.memory.action = "upgrading";
                 } else {
-                    creep.memory.action = "idling";
+                    if (creep.carry.energy < creep.carryCapacity) {
+                        creep.memory.mode = "filling";
+                    } else {
+                        creep.memory.action = "idling";
+                    }
                 }
                 break;
         }
