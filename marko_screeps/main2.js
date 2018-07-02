@@ -13,9 +13,10 @@ let makecreeps = require('makecreeps');
 let roleHarvester = require('role.harvester');
 let roleRecycle = require('role.recycle');
 let roleBuilder = require('role.builder');
-// let roleHyperMiner = require('role.hyperminer');
+let roleHyperMiner = require('role.hyperminer');
 // let roleDistributor = require('role.distributor');
-let roleUpgrader = require('role.upgrader');
+let roleUpgrader1 = require('role.upgrader1');
+let roleUpgrader = require('role.upgrader2');
 
 module.exports.loop = function () {
     support.erasedead();
@@ -38,15 +39,16 @@ module.exports.loop = function () {
     const containers = MYROOM.find(FIND_STRUCTURES, {filter: { structureType: STRUCTURE_CONTAINER }});
     const tombstones = MYROOM.find(FIND_TOMBSTONES);
 
-
-    makecreeps.creeps2(MYSPAWNER,sources);
+    makecreeps.creeps2(MYSPAWNER,sources,extensions);
     support.SpawnerInfo(MYSPAWNER);
 
-    if (extensions < 5) {
+
+    if (extensions.length < 5) {
         AREA = support.getTilesInArea(MYSPAWNER, 2, 'checkerboard', false, -3,-2);
         for (tile in AREA) {
             x = AREA[tile].x;
             y = AREA[tile].y;
+
             MYROOM.createConstructionSite(x, y, STRUCTURE_EXTENSION);
         }
     }

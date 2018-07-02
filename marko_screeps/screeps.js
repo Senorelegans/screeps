@@ -14,7 +14,7 @@ Game.creeps['builder7309476'].memory.role = 'upgrader';
 
 builder7309476
 
-Game.creeps['poop'].memory.role = 'upgrader';
+Game.creeps['harvester7454708'].memory.spawnid = Game.spawns['Spawn1'].id;
 
 
 

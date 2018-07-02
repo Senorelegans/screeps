@@ -6,7 +6,7 @@
 let support = require('support');
 let roleHarvester = require('role.harvester');
 let roleRecycle = require('role.recycle');
-let roleUpgrader = require('role.upgrader');
+let roleUpgrader = require('role.upgrader1');
 
 module.exports.loop = function () {
     // Names for units
@@ -22,6 +22,7 @@ module.exports.loop = function () {
     // Creep census
     let roles = {
         'recycle': {amount:0, actions:roleRecycle},
+        'upgrader': {amount:4, parts:[WORK,WORK,CARRY,MOVE], cost:300, actions:roleUpgrader},
         'harvester': {amount:4, parts:[WORK,WORK,CARRY,MOVE], cost:300, actions:roleHarvester},
     };
 
@@ -32,8 +33,10 @@ module.exports.loop = function () {
             var newName = role + Game.time;
             let memory = {role: role};
             switch (role) {
+                case 'upgrader':
                 case 'harvester':
                     memory.sourceid = sources[0].id;
+                    memory.spawnid = MYSPAWNER.id;
                     break;
             }
             MYSPAWNER.spawnCreep(roles[role].parts, newName, {memory: memory})

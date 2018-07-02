@@ -30,7 +30,7 @@ module.exports = {
         target.room.visual.text("M", x, y, {align: 'center', opacity: 0.5} );
         switch (pattern) {
             case "none":
-                console.log(pattern);
+                // console.log(pattern);
                 return AREA;
 
             case "checkerboard":
