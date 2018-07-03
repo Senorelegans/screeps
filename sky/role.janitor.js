@@ -17,8 +17,10 @@ module.exports = {
             case "filling":
                 if (false) {
                     
-                } else if (tasks.pickupDroppedFarthestFrom(creep, target.pos)) {
+                } else if (tasks.pickupDropped(creep)) {
                     creep.memory.action = "picking up gil";
+                } else if (tasks.robTombstones(creep)) {
+                    creep.memory.action = "robbing graves";
                 } else if (tasks.withdrawFromContainers(creep)) {
                     creep.memory.action = "withdraw container";
                 } else {

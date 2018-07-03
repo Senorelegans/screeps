@@ -2,11 +2,14 @@
 // Game.spawns['Spawn1'].spawnCreep( [WORK,WORK,CARRY,MOVE],'a',{ memory: { role: 'harvester' } } );
 // Game.creeps['a'].move(TOP);
 // https://github.com/bonzaiferroni/bonzAI/wiki/Traveler-API
+// for (let creep of Object.keys(Game.creeps)) {console.log(creep);}
 
 /*
     IDEAS:
     expand on tech progress (automate building of extensions and different types of creeps)
     have main do some searches and distribute tasks to creeps by role (minimize searching that creeps have to do, reduce overlaps)
+    make helmsman (goes to rampart near enemies and attacks (maybe repairs too?))
+    http://unicode.org/emoji/charts/emoji-style.txt
 */
 
 let support = require('support');
@@ -48,21 +51,22 @@ module.exports.loop = function () {
     let towers = MYROOM.find(FIND_MY_STRUCTURES).filter(structure => structure.structureType == "tower");
     if (towers.length > 0) {
         for (let tower of towers) {
-            // Heal units
-            let closestHurtCreep = tower.pos.findClosestByRange(FIND_MY_CREEPS, {
-                filter: (creep) => creep.hits < creep.hitsMax
-            });
-            if(closestHurtCreep) {
-                tower.heal(closestHurtCreep);
-            }
-            // Repair buildings
-            tasks.repairStructures(tower);
-            // Repair walls
-            tasks.repairWeakestWalls(tower, 1000);
             // Attack hostiles
             let closestHostile = tower.pos.findClosestByRange(FIND_HOSTILE_CREEPS);
             if(closestHostile) {
                 tower.attack(closestHostile);
+            } else {
+                // Heal units
+                let closestHurtCreep = tower.pos.findClosestByRange(FIND_MY_CREEPS, {
+                    filter: (creep) => creep.hits < creep.hitsMax
+                });
+                if(closestHurtCreep) {
+                    tower.heal(closestHurtCreep);
+                }
+                // Repair buildings
+                tasks.repairStructures(tower);
+                // Repair walls
+                tasks.repairWeakestWalls(tower, 1000);
             }
         }
     }
@@ -71,10 +75,10 @@ module.exports.loop = function () {
     // Tier 3
     roles.jack3.quota = 0;
     roles.miner3.quota = 0;
-    roles.upgrader3.quota = 0;
+    roles.upgrader3.quota = 2;
     roles.supplier3.quota = 0;
     roles.builder3.quota = 0;
-    roles.longhauler3.quota = 0;
+    roles.longhauler3.quota = 4;
     // Tier 2
     roles.grunt2.quota = 0;
     roles.archer2.quota = 0;
@@ -86,16 +90,24 @@ module.exports.loop = function () {
     roles.hauler2.quota = 2;
     roles.upgrader2.quota = 1;
     roles.supplier2.quota = 2;
-    roles.builder2.quota = 4;
+    roles.builder2.quota = 3;
+    roles.repairer2.quota = 3;
     // Tier 1
     roles.jack1.quota = 1;
     // roles.messenger.quota = 1;
 
     const hostiles = MYROOM.find(FIND_HOSTILE_CREEPS, {filter: function(object) {
-        return object.getActiveBodyparts(ATTACK) > 0 || object.getActiveBodyparts(RANGED_ATTACK) > 0;
+        return (object.getActiveBodyparts(ATTACK) > 0 || object.getActiveBodyparts(RANGED_ATTACK) > 0) && object.owner.username != "Invader";
     }});
     if (hostiles.length > 0) {
         roles.grunt3.quota = 2;
+    } else {
+        for(let name in Game.creeps) {
+            let creep = Game.creeps[name];
+            if (creep.role == "grunt3") {
+                creep.role = "recycle";
+            }
+        }
     }
 
     if (MYROOM.energyCapacityAvailable < 1300) {

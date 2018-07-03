@@ -10,10 +10,10 @@ module.exports = {
             creep.memory.mode = "emptying";
         }
 
-        const myRoom = Game.rooms["E24N53"];
-        const remoteRoom = Game.rooms["E24N52"];
-        const homePosition = new RoomPosition(40, 19, "E24N53"); // Left of home spawner
-        const remoteRoomPos = new RoomPosition(13, 15, "E24N52"); // remote 
+        const myRoom = Game.rooms["E27N53"];
+        const remoteRoom = Game.rooms["E28N53"];
+        const homePosition = new RoomPosition(27, 21, "E27N53"); // Top of home spawner
+        const remoteRoomPos = new RoomPosition(45, 27, "E28N53"); // remote 
         
         switch (creep.memory.mode) {
             case "filling":
@@ -30,18 +30,24 @@ module.exports = {
                 
             case "emptying":
                 const target = homePosition;
-                // Drop resources next to spawner
-                if (tasks.despoitNearestEnergy(creep)) {
-                    creep.memory.action = "depositing";
-                } else if (creep.pos.x == target.x && creep.pos.y == target.y) {
-                    creep.memory.action = "dropping";
-                    creep.drop(RESOURCE_ENERGY);
-                    if (creep.ticksToLive < 1200) {
-                        creep.memory.action = "renewing";
-                        Game.spawns.Spawn1.renewCreep(creep);
+                if (false) {
+
+                } else if (creep.carry.energy == 0) {
+                    if (creep.ticksToLive < 1000) {
+                        if (tasks.goTo(target)) {
+                            creep.memory.action = "renewing";
+                            Game.spawns.Spawn1.renewCreep(creep);
+                        }
                     } else {
                         creep.memory.mode = "filling";
                     }
+                } else if (tasks.depositStorage(creep)) {
+                    creep.memory.action = "deposit storage";
+                } else if (tasks.depositNearestEnergy(creep)) {
+                    creep.memory.action = "deposit nearest";
+                } else if (creep.pos.x == target.x && creep.pos.y == target.y) {
+                    creep.drop(RESOURCE_ENERGY);
+                    creep.memory.action = "dropping";
                 } else {
                     creep.moveTo(target);
                 }

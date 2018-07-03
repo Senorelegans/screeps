@@ -127,11 +127,18 @@ module.exports = {
         }
     },
 
-    // Activate safe mode if hostile attackers are found
-    autosafe: function(room) {
-        const hostiles = room.find(FIND_HOSTILE_CREEPS, {filter: function(object) {
-            return object.getActiveBodyparts(ATTACK) > 0 || object.getActiveBodyparts(RANGED_ATTACK) > 0;
-        }});
+    // Activate safe mode if hostile attackers are found 
+    autosafe: function(room, skipNeutrals = true) {
+        let hostiles = undefined;
+        if (skipNeutrals) {
+            hostiles = room.find(FIND_HOSTILE_CREEPS, {filter: function(object) {
+                return (object.getActiveBodyparts(ATTACK) > 0 || object.getActiveBodyparts(RANGED_ATTACK) > 0) && object.owner.username != "Invader";
+            }});
+        } else {
+            hostiles = room.find(FIND_HOSTILE_CREEPS, {filter: function(object) {
+                return (object.getActiveBodyparts(ATTACK) > 0 || object.getActiveBodyparts(RANGED_ATTACK) > 0);
+            }});
+        }
         if (hostiles.length > 0) {
             room.controller.activateSafeMode();
         }

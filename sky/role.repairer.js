@@ -34,8 +34,8 @@ module.exports = {
 
                 } else if (tasks.buildStructures(creep)) {
                     creep.memory.action = "building";
-                } else if (tasks.repairClosestWalls(creep)) {
-                    creep.memory.action = "walling closest";
+                } else if (tasks.repairWeakestWalls(creep)) {
+                    creep.memory.action = "walling weakest";
                 } else if (tasks.repairStructures(creep)) {
                     creep.memory.action = "repairing";
                 } else {

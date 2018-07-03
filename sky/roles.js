@@ -3,6 +3,7 @@ let roleMiner = require('role.miner');
 let roleHyperMiner = require('role.hyperminer');
 let roleUpgrader = require('role.upgrader');
 let roleBuilder = require('role.builder');
+let roleRepairer = require('role.repairer');
 let roleSupplier = require('role.supplier');
 let roleRecycle = require('role.recycle');
 let roleGrunt = require('role.grunt');
@@ -21,6 +22,7 @@ module.exports = {
     'medic3': {parts:support.genParts([[TOUGH,3],[MOVE,5],[HEAL,2]]), cost:780, actions:roleMedic},
     'upgrader3': {parts:support.genParts([[WORK,4],[CARRY,4],[MOVE,4]]), cost:800, actions:roleUpgrader},
     'builder3': {parts:support.genParts([[WORK,4],[CARRY,2],[MOVE,6]]), cost:800, actions:roleBuilder},
+    'repairer3': {parts:support.genParts([[WORK,4],[CARRY,2],[MOVE,6]]), cost:800, actions:roleRepairer},
     'supplier3': {parts:support.genParts([[CARRY,8],[MOVE,8]]), cost:800, actions:roleSupplier},
     'janitor3': {parts:support.genParts([[CARRY,8],[MOVE,8]]), cost:800, actions:roleJanitor},
     'hauler3': {parts:support.genParts([[CARRY,8],[MOVE,8]]), cost:800, actions:roleHauler},
@@ -35,8 +37,9 @@ module.exports = {
     'hauler2': {parts:support.genParts([[CARRY,5],[MOVE,5]]), cost:500, actions:roleHauler},
     'upgrader2': {parts:support.genParts([[WORK,4],[CARRY,1],[MOVE,2]]), cost:550, actions:roleUpgrader},
     'builder2': {parts:support.genParts([[WORK,3],[CARRY,2],[MOVE,2]]), cost:500, actions:roleBuilder},
+    'repairer2': {parts:support.genParts([[WORK,3],[CARRY,2],[MOVE,2]]), cost:500, actions:roleRepairer},
     'supplier2': {parts:support.genParts([[CARRY,7],[MOVE,4]]), cost:550, actions:roleSupplier},
-    'longhauler2': {parts:support.genParts([[WORK,3],[CARRY,4], [MOVE,3]]), cost:550, actions:roleLonghauler},
+    'longhauler2': {parts:support.genParts([[WORK,2],[CARRY,3],[MOVE,5]]), cost:500, actions:roleLonghauler},
     'hyperminer2': {parts:support.genParts([[WORK, 5],[MOVE, 1]]), cost:550, actions:roleHyperMiner},
     'miner2': {parts:support.genParts([[WORK,4],[CARRY,2],[MOVE,1]]), cost:550, actions:roleMiner},
     'jack2': {parts:support.genParts([[WORK,2],[CARRY,2],[MOVE,4]]), cost:500, actions:roleJack},
@@ -47,6 +50,7 @@ module.exports = {
     'janitor1': {parts:support.genParts([[CARRY,3],[MOVE,3]]), cost:300, actions:roleJanitor},
     'hauler1': {parts:support.genParts([[CARRY,3],[MOVE,3]]), cost:300, actions:roleHauler},
     'builder1': {parts:support.genParts([[WORK,2],[CARRY,1],[MOVE,1]]), cost:300, actions:roleBuilder},
+    'repairer1': {parts:support.genParts([[WORK,2],[CARRY,1],[MOVE,1]]), cost:300, actions:roleRepairer},
     'upgrader1': {parts:support.genParts([[WORK,2],[CARRY,1],[MOVE,1]]), cost:300, actions:roleUpgrader},
     'supplier1': {parts:support.genParts([[CARRY,2],[MOVE,2]]), cost:200, actions:roleSupplier},
     'miner1': {parts:support.genParts([[WORK,2],[CARRY,1],[MOVE,1]]), cost:300, actions:roleMiner},

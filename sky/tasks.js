@@ -60,7 +60,7 @@ module.exports = {
         }
     },
 
-    repairClosestWalls: function(creep, maxHits = 100000) {
+    repairClosestWalls: function(creep, maxHits = 300000) {
         let target = creep.pos.findClosestByPath(FIND_STRUCTURES, {
             filter: structure =>
             (structure.structureType == STRUCTURE_WALL ||
@@ -77,7 +77,7 @@ module.exports = {
         }
     },
 
-    repairWeakestWalls: function(creep, maxHits = 100000) {
+    repairWeakestWalls: function(creep, maxHits = 300000) {
         let targets = creep.room.find(FIND_STRUCTURES, {
             filter: structure =>
             (structure.structureType == STRUCTURE_WALL ||
@@ -116,6 +116,24 @@ module.exports = {
             creep.moveTo(target);
         }
         return true;
+    },
+
+    
+    robTombstones: function(creep) {
+        if (creep.carry < creep.carryCapacity) {
+            let container = creep.pos.findClosestByPath(FIND_TOMBSTONES);
+            if (container) {
+                for (let thing of Object.keys(container.store)) {
+                    if (creep.withdraw(container, thing) == ERR_NOT_IN_RANGE) {
+                        creep.moveTo(container);
+                    }
+                }
+                return true;
+            } else {
+                return false;
+            }
+        }
+        return false;
     },
 
     // Picks up resources laying around
@@ -249,7 +267,7 @@ module.exports = {
     depositStorage: function(creep) {
         let container = creep.room.storage;
         if (container && container.store.energy < container.storeCapacity) {
-            if (creep.transfer(container, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+            if (creep.transfer(container) == ERR_NOT_IN_RANGE) {
                 creep.moveTo(container);
             }
             return true;
